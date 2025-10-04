@@ -91,10 +91,11 @@ func main() {
 
 	templates := []string{
 		"base/base",
-		"character/character",
+		"abilities/abilities",
 		"races/human",
 		"backgrounds/outlander",
 		"classes/fighter-1",
+		"character/character",
 	}
 
 	var attributes interface{}

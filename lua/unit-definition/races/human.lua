@@ -1,4 +1,3 @@
-_G.core = _G.core or {}
 local core = _G.core
 
 function unitDefinition(attributes, inventory, options)
