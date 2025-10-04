@@ -76,7 +76,7 @@ func CollectInputFromChoices(choices []unitDefintion.Choice) map[string]interfac
 }
 
 func getTemplate(template string) string {
-	data, err := os.ReadFile("unit-definition/" + template + ".lua")
+	data, err := os.ReadFile("lua/unit-definition/" + template + ".lua")
 	if err != nil {
 		panic(err)
 	}
