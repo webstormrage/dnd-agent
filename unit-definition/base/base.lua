@@ -1,6 +1,6 @@
 function unitDefinition(attributes, equipment, options)
     -- Действия
-    if attributes['actions'] then
+    if attributes['actions'] == nil then
         attributes['actions'] = {}
     end
 

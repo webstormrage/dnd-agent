@@ -1,27 +1,25 @@
 package main
 
 import (
-	"dnd-agent/pkg/world-zone"
+	"dnd-agent/pkg/unit-defintion"
 	"fmt"
 	"os"
 )
 
 func main() {
-	// Чтение XML из файла в строку
-	data, err := os.ReadFile("maps/frey-tavern.xml")
+	// Читаем содержимое Lua-файла в строку
+	data, err := os.ReadFile("unit-definition/base/base.lua")
+	if err != nil {
+		panic(err)
+	}
+	luaCode := string(data)
+
+	// Выполняем функцию init(attributes) из Lua-кода
+	attrs, err := unitDefintion.RunLuaStringWithAttributes(luaCode, "unitDefinition")
 	if err != nil {
 		panic(err)
 	}
 
-	// Создание структуры уровня из XML через пакет worldzone
-	level, err := worldzone.LoadLevelFromXML(string(data))
-	if err != nil {
-		panic(err)
-	}
-
-	// Рендеринг уровня в строку
-	result := worldzone.RenderLevel(level)
-
-	// Вывод карты в стандартный вывод
-	fmt.Println(result)
+	// Выводим результат в виде JSON
+	fmt.Println(unitDefintion.PrettyPrintJSON(attrs))
 }

@@ -4,6 +4,7 @@ go 1.23.4
 
 require (
 	github.com/joho/godotenv v1.5.1
+	github.com/yuin/gopher-lua v1.1.1
 	google.golang.org/genai v1.17.0
 )
 
