@@ -27,7 +27,7 @@ func ProcessUnitDefinition(
 	attrTable *lua.LTable,
 	inventoryTable *lua.LTable,
 	handleChoices HandleChoicesFunc,
-) (interface{}, error) {
+) (interface{}, interface{}, error) {
 
 	// Создаём таблицу выбора
 	choicesTable := L.NewTable()
@@ -35,7 +35,7 @@ func ProcessUnitDefinition(
 	// Получаем список choices из Lua
 	choices, err := GetChoices(L, luaCode, attrTable, choicesTable)
 	if err != nil {
-		return nil, fmt.Errorf("ошибка получения choices: %v", err)
+		return nil, nil, fmt.Errorf("ошибка получения choices: %v", err)
 	}
 
 	// Передаём их в callback для получения пользовательских значений
@@ -45,24 +45,24 @@ func ProcessUnitDefinition(
 	optionsTable := MapToLuaTable(L, results)
 
 	// Выполняем основное определение
-	attributes, err := RunDefinition(L, luaCode, attrTable, inventoryTable, optionsTable)
+	attributes, inventory, err := RunDefinition(L, luaCode, attrTable, inventoryTable, optionsTable)
 	if err != nil {
-		return nil, fmt.Errorf("ошибка при выполнении RunDefinition: %v", err)
+		return nil, nil, fmt.Errorf("ошибка при выполнении RunDefinition: %v", err)
 	}
 
-	return attributes, nil
+	return attributes, inventory, nil
 }
 
-func RunDefinition(L *lua.LState, luaCode string, attributesTable, inventoryTable, optionsTable *lua.LTable) (interface{}, error) {
+func RunDefinition(L *lua.LState, luaCode string, attributesTable, inventoryTable, optionsTable *lua.LTable) (interface{}, interface{}, error) {
 
 	// Выполняем Lua-код из строки
 	if err := L.DoString(luaCode); err != nil {
-		return nil, fmt.Errorf("ошибка при выполнении Lua-кода: %v", err)
+		return nil, nil, fmt.Errorf("ошибка при выполнении Lua-кода: %v", err)
 	}
 
 	fn := L.GetGlobal("unitDefinition")
 	if fn.Type() != lua.LTFunction {
-		return nil, fmt.Errorf("в Lua не найдена функция '%s'", "unitDefinition")
+		return nil, nil, fmt.Errorf("в Lua не найдена функция '%s'", "unitDefinition")
 	}
 
 	// вызываем функцию init(attributes)
@@ -71,10 +71,10 @@ func RunDefinition(L *lua.LState, luaCode string, attributesTable, inventoryTabl
 		NRet:    0,
 		Protect: true,
 	}, attributesTable, inventoryTable, optionsTable); err != nil {
-		return nil, fmt.Errorf("ошибка при вызове Lua-функции: %v", err)
+		return nil, nil, fmt.Errorf("ошибка при вызове Lua-функции: %v", err)
 	}
 
-	return luaTableToMap(attributesTable), nil
+	return luaTableToMap(attributesTable), luaTableToMap(inventoryTable), nil
 }
 
 func GetChoices(L *lua.LState, luaCode string, attributes *lua.LTable, choices *lua.LTable) ([]Choice, error) {

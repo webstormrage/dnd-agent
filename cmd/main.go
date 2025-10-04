@@ -97,10 +97,11 @@ func main() {
 	}
 
 	var attributes interface{}
+	var inventory interface{}
 	var err error
 
 	for _, template := range templates {
-		attributes, err = unitDefintion.ProcessUnitDefinition(
+		attributes, inventory, err = unitDefintion.ProcessUnitDefinition(
 			L,
 			getTemplate(template),
 			attrTable,
@@ -114,4 +115,5 @@ func main() {
 	}
 
 	fmt.Println(unitDefintion.PrettyPrintJSON(attributes))
+	fmt.Println(unitDefintion.PrettyPrintJSON(inventory))
 }
