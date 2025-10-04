@@ -1,0 +1,35 @@
+<level width='10' height='20'>
+    <!--Фасад доходного дома-->
+    <room x='0' y='0' width='10' height='20' />
+    <object type="door" height="1" width="1" x='5' y='0' to="lamp-street.pastion-door" name="frey-pastion.entrance"/>
+
+    <!--Комната 1-->
+    <room x='0' y='0' width='4' height='6'/>
+    <object type="door" height="1" width="1" x='3' y='4'/>
+    <object type="kip" x="1" y="1" width="1" height="2" />
+
+    <!--Комната 2-->
+    <room x='6' y='0' width='4' height='6'/>
+    <object type="door" height="1" width="1" x='6' y='4'/>
+    <object type="kip" x="8" y="1" width="1" height="2" />
+
+    <!--Комната 3-->
+    <room x='0' y='5' width='4' height='7'/>
+    <object type="door" height="1" width="1" x='3' y='10'/>
+    <object type="kip" x="1" y="7" width="1" height="2" />
+
+    <!--Комната 4-->
+    <room x='6' y='5' width='4' height='7'/>
+    <object type="door" height="1" width="1" x='6' y='10'/>
+    <object type="kip" x="8" y="7" width="1" height="2" />
+
+    <!--Комната 5-->
+    <room x='0' y='11' width='4' height='9'/>
+    <object type="door" height="1" width="1" x='3' y='17'/>
+    <object type="kip" x="1" y="14" width="1" height="2" />
+
+    <!--Комната 6-->
+    <room x='6' y='11' width='4' height='9'/>
+    <object type="door" height="1" width="1" x='6' y='17'/>
+    <object type="kip" x="8" y="14" width="1" height="2" />
+</level>

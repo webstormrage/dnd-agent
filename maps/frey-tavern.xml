@@ -1,0 +1,59 @@
+<level width="20" height="22">
+    <!--Фасад таверны-->
+    <room x="0" y="0" width="20" height="22" />
+    <object type="door" x="12" y="0" width="1" height="1" to="lamp-street.tavern-door" name="frey-tavern.entrance" />
+
+    <!-- Заполнение зала -->
+    <object type="table" x="1" y="3" width="2" height="1" />
+    <object type="table" x="1" y="7" width="2" height="1" />
+    <object type="table" x="1" y="11" width="2" height="1" />
+
+    <object type="table" x="4" y="1" width="2" height="1" />
+    <object type="table" x="4" y="5" width="2" height="1" />
+    <object type="table" x="4" y="13" width="2" height="1" />
+
+    <!--Игрок -->
+    <object type="unit" x="5" y="9" width="1" height="1" name="player" />
+    <object type="table" x="5" y="10" width="2" height="1" />
+
+    <object type="table" x="8" y="3" width="2" height="1" />
+    <object type="table" x="8" y="7" width="2" height="1" />
+    <object type="table" x="8" y="11" width="2" height="1" />
+
+    <object type="table" x="9" y="13" width="4" height="1" />
+
+    <object type="table" x="13"  y="5" width="2" height="1" />
+    <object type="table" x="13"  y="9" width="2" height="1" />
+
+    <object type="table" x="14"  y="1" width="2" height="1" />
+
+    <object type="table" x="16"  y="13" width="2" height="1" />
+
+    <!--Хозяйское помещение-->
+    <room x="0" y="15" width="20" height="7" />
+    <object type="door" x="12" y="15" width="1" height="1" />
+    <object type="furnace" x="9" y="15" width="2" height="1"/>
+    <object type="table" x="9" y="17" width="2" height="1" />
+
+    <object type="kip" x="1" y="16" height="2" width="1" />
+    <object type="kip" x="1" y="19" height="2" width="1" />
+
+    <object type="kip" x="3" y="16" height="2" width="1" />
+    <object type="kip" x="3" y="19" height="2" width="1" />
+
+    <object type="kip" x="5" y="16" height="2" width="1" />
+    <object type="kip" x="5" y="19" height="2" width="1" />
+
+    <object type="barrel" x="13" y="16" height="1" width="1" />
+    <object type="barrel" x="13" y="19" height="1" width="1" />
+
+    <object type="barrel" x="14" y="17" height="1" width="1" />
+
+    <object type="barrel" x="15" y="20" height="1" width="1" />
+
+    <object type="barrel" x="16" y="16" height="1" width="1" />
+    <object type="barrel" x="16" y="18" height="1" width="1" />
+
+    <object type="barrel" x="18" y="17" height="1" width="1" />
+    <object type="barrel" x="18" y="19" height="1" width="1" />
+</level>

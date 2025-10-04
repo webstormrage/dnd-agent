@@ -1,0 +1,45 @@
+<level width='11' height='52'>
+    <!--Переход к Maiden Avenue-->
+    <object type="boundary" x="3" y="0" width="5" height="1" />
+
+    <!-- 1ый Дом Lamp Street -->
+    <room x='0' y='0' width='3' height='20' />
+    <object type="path-blocker" x="0" y="1" width="2" height="18" />
+    <object type="door" x="2" y="10" width="1" height="1" />
+
+    <!-- 2ый Дом Lamp Street -->
+    <room x='8' y='0' width='3' height='10' />
+    <object type="path-blocker" x="9" y="1" width="2" height="8" />
+    <object type="door" x="8" y="5" width="1" height="1" />
+
+    <!-- 3ий Дом на Lamp Street (Пастион у Фреи)-->
+    <room x='0' y='21' width='3' height='10' />
+    <object type="path-blocker" x="0" y="22" width="2" height="8" />
+    <object type="door" x="2" y="25" width="1" height="1" to="frey-pastion.entrance" name="lamp-street.pastion-door"/>
+
+    <!-- 4ый Дом Lamp Street -->
+    <room x='8' y='11' width='3' height='15' />
+    <object type="path-blocker" x="9" y="12" width="2" height="13" />
+    <object type="door" x="8" y="18" width="1" height="1" />
+
+    <!-- 5ый Дом Lamp Street (Таверна у Фреи)-->
+    <room x='0' y='32' width='3' height='20' />
+    <object type="path-blocker" x="0" y="33" width="2" height="18" />
+    <object type="door" x="2" y="45" width="1" height="1" to="frey-tavern.entrance" name="lamp-street.tavern-door" />
+
+    <!-- 6ый Дом Lamp Street -->
+    <room x='8' y='27' width='3' height='15' />
+    <object type="path-blocker" x="9" y="28" width="2" height="13" />
+    <object type="door" x="8" y="35" width="1" height="1" />
+
+    <!-- 8ой Дом Lamp Street -->
+    <room x='8' y='43' width='4' height='9' />
+    <object type="path-blocker" x="9" y="44" width="2" height="7" />
+    <object type="door" x="8" y="45" width="1" height="1" />
+
+    <!--Переход к East Huldane-->
+    <object type="boundary" x="3" y="51" width="5" height="1" />
+
+    <!-- Бандит -->
+    <object type="unit" x="10" y="10" width="1" height="1" name="bandit" />
+</level>
