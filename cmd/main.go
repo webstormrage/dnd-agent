@@ -45,31 +45,41 @@ func CollectInputFromChoices(choices []unitDefintion.Choice) map[string]interfac
 	return results
 }
 
-func main() {
-	// Читаем содержимое Lua-файла в строку
-	data, err := os.ReadFile("unit-definition/character/character.lua")
+func getTemplate(template string) string {
+	data, err := os.ReadFile("unit-definition/" + template + "/" + template + ".lua")
 	if err != nil {
 		panic(err)
 	}
-	luaCode := string(data)
+	return string(data)
+}
 
+func main() {
 	L := lua.NewState()
 
 	attrTable := L.NewTable()
-	choicesTable := L.NewTable()
-	// Выполняем функцию init(attributes) из Lua-кода
-	choices, err := unitDefintion.GetChoices(L, luaCode, attrTable, choicesTable)
-	if err != nil {
-		panic(err)
-	}
 	equipmentTable := L.NewTable()
 
-	// Просим пользователя ввести данные
-	results := CollectInputFromChoices(choices)
+	templates := []string{
+		"base",
+		"character",
+	}
 
-	optionsTable := unitDefintion.MapToLuaTable(L, results)
+	var attributes interface{}
+	var err error
 
-	attributes, err := unitDefintion.RunDefinition(L, luaCode, attrTable, equipmentTable, optionsTable)
+	for _, template := range templates {
+		attributes, err = unitDefintion.ProcessUnitDefinition(
+			L,
+			getTemplate(template),
+			attrTable,
+			equipmentTable,
+			CollectInputFromChoices,
+		)
+
+		if err != nil {
+			panic(err)
+		}
+	}
 
 	fmt.Println(unitDefintion.PrettyPrintJSON(attributes))
 }

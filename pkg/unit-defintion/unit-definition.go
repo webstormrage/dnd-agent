@@ -14,6 +14,46 @@ type Choice struct {
 	Options []string `json:"options"`
 }
 
+// HandleChoicesFunc — callback, который обрабатывает []Choice и возвращает map[string]interface{}
+type HandleChoicesFunc func(choices []Choice) map[string]interface{}
+
+// ProcessUnitDefinition — обобщённая функция для полного цикла:
+// 1. Получение choices из Lua,
+// 2. Передача их в callback для заполнения,
+// 3. Преобразование обратно в Lua-таблицу,
+// 4. Вызов RunDefinition.
+func ProcessUnitDefinition(
+	L *lua.LState,
+	luaCode string,
+	attrTable *lua.LTable,
+	equipmentTable *lua.LTable,
+	handleChoices HandleChoicesFunc,
+) (interface{}, error) {
+
+	// Создаём таблицу выбора
+	choicesTable := L.NewTable()
+
+	// Получаем список choices из Lua
+	choices, err := GetChoices(L, luaCode, attrTable, choicesTable)
+	if err != nil {
+		return nil, fmt.Errorf("ошибка получения choices: %v", err)
+	}
+
+	// Передаём их в callback для получения пользовательских значений
+	results := handleChoices(choices)
+
+	// Преобразуем результат обратно в Lua-таблицу
+	optionsTable := MapToLuaTable(L, results)
+
+	// Выполняем основное определение
+	attributes, err := RunDefinition(L, luaCode, attrTable, equipmentTable, optionsTable)
+	if err != nil {
+		return nil, fmt.Errorf("ошибка при выполнении RunDefinition: %v", err)
+	}
+
+	return attributes, nil
+}
+
 func RunDefinition(L *lua.LState, luaCode string, attributesTable, equipmentTable, optionsTable *lua.LTable) (interface{}, error) {
 
 	// Выполняем Lua-код из строки
