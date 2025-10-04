@@ -7,7 +7,14 @@ import (
 	lua "github.com/yuin/gopher-lua"
 )
 
-func RunDefinition(L *lua.LState, luaCode string, attributesTable *lua.LTable) (interface{}, error) {
+type Choice struct {
+	Name    string   `json:"name"`
+	Type    string   `json:"type"`
+	Limit   int      `json:"limit"`
+	Options []string `json:"options"`
+}
+
+func RunDefinition(L *lua.LState, luaCode string, attributesTable, equipmentTable, optionsTable *lua.LTable) (interface{}, error) {
 
 	// Выполняем Lua-код из строки
 	if err := L.DoString(luaCode); err != nil {
@@ -24,14 +31,14 @@ func RunDefinition(L *lua.LState, luaCode string, attributesTable *lua.LTable) (
 		Fn:      fn,
 		NRet:    0,
 		Protect: true,
-	}, attributesTable); err != nil {
+	}, attributesTable, equipmentTable, optionsTable); err != nil {
 		return nil, fmt.Errorf("ошибка при вызове Lua-функции: %v", err)
 	}
 
 	return luaTableToMap(attributesTable), nil
 }
 
-func GetChoices(L *lua.LState, luaCode string, attributes *lua.LTable, choices *lua.LTable) (interface{}, error) {
+func GetChoices(L *lua.LState, luaCode string, attributes *lua.LTable, choices *lua.LTable) ([]Choice, error) {
 
 	// Выполняем Lua-код из строки
 	if err := L.DoString(luaCode); err != nil {
@@ -40,7 +47,7 @@ func GetChoices(L *lua.LState, luaCode string, attributes *lua.LTable, choices *
 
 	fn := L.GetGlobal("optionsDefinition")
 	if fn.Type() != lua.LTFunction {
-		return luaTableToMap(choices), nil
+		return luaTableToChoices(choices), nil
 	}
 
 	if err := L.CallByParam(lua.P{
@@ -51,7 +58,7 @@ func GetChoices(L *lua.LState, luaCode string, attributes *lua.LTable, choices *
 		return nil, fmt.Errorf("ошибка при вызове Lua-функции: %v", err)
 	}
 
-	return luaTableToMap(choices), nil
+	return luaTableToChoices(choices), nil
 }
 
 func PrettyPrintJSON(data interface{}) string {
