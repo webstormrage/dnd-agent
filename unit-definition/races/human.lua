@@ -18,7 +18,7 @@ function unitDefinition(attributes, inventory, options)
         attributes['proficiencies'] = {}
     end
 
-    attributes['proficiencies']['language-common'] = true
+    attributes['proficiencies']['language/common'] = true
     attributes['proficiencies'][options['second-language']] = true
 
     attributes['race'] = 'human'
@@ -29,22 +29,22 @@ function optionsDefinition(attributes, choices)
         name = 'second-language',
         type = 'select',
         options = {
-            'language-abyssal',
-            'language-celestial',
-            'language-draconic',
-            'language-deep-speech',
-            'language-infernal',
-            'language-primordial',
-            'language-sylvan',
-            'language-undercommon',
-            'language-common',
-            'language-dwarvish',
-            'language-elvish',
-            'language-giant',
-            'language-gnomish',
-            'language-goblin',
-            'language-halfling',
-            'language-orc'
+            'language/abyssal',
+            'language/celestial',
+            'language/draconic',
+            'language/deep-speech',
+            'language/infernal',
+            'language/primordial',
+            'language/sylvan',
+            'language/undercommon',
+            'language/common',
+            'language/dwarvish',
+            'language/elvish',
+            'language/giant',
+            'language/gnomish',
+            'language/goblin',
+            'language/halfling',
+            'language/orc'
         }
     })
 end

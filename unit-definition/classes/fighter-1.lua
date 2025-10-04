@@ -21,11 +21,11 @@ function unitDefinition(attributes, inventory, options)
 
     attributes['proficiencies']['simple-weapon'] = true
     attributes['proficiencies']['martial-weapons'] = true
-    attributes['proficiencies']['light-armor'] = true
-    attributes['proficiencies']['medium-armor'] = true
-    attributes['proficiencies']['heavy-armor'] = true
-    attributes['proficiencies']['strength-save'] = true
-    attributes['proficiencies']['constitution-save'] = true
+    attributes['proficiencies']['armor/light'] = true
+    attributes['proficiencies']['armor/medium'] = true
+    attributes['proficiencies']['armor/heavy'] = true
+    attributes['proficiencies']['save/strength'] = true
+    attributes['proficiencies']['save/constitution'] = true
     attributes['proficiencies'][options['primary-skill']] = true
     attributes['proficiencies'][options['secondary-skill']] = true
 
@@ -55,7 +55,7 @@ function unitDefinition(attributes, inventory, options)
         if options['armor'] == 'heavy-set' then
             inventory['chain-mail'] = (inventory['chain-mail'] or 0) + 1
         else
-            inventory['leather-armor'] = (inventory['leather-armor'] or 0) + 1
+            inventory['armor/leather'] = (inventory['armor/leather'] or 0) + 1
             inventory['longbow'] = (inventory['longbow'] or 0) + 1
             inventory['arrow'] = (inventory['arrow'] or 0) + 20
         end
@@ -131,14 +131,14 @@ function optionsDefinition(attributes, choices)
     })
 
     table.insert(choices, {
-        name = 'feats',
+        name = 'feat',
         type = 'select',
         options = {
-            'fighting-style-archery',
-            'fighting-style-defense',
-            'fighting-style-great-weapon-fighting',
-            'fighting-style-protection',
-            'fighting-style-two-weapon-fighting'
+            'fighting-style/archery',
+            'fighting-style/defense',
+            'fighting-style/great-weapon-fighting',
+            'fighting-style/protection',
+            'fighting-style/two-weapon-fighting'
         }
     })
 

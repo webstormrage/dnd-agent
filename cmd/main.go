@@ -94,6 +94,7 @@ func main() {
 		"character/character",
 		"races/human",
 		"backgrounds/outlander",
+		"classes/fighter-1",
 	}
 
 	var attributes interface{}
