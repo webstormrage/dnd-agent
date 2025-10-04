@@ -10,7 +10,6 @@ import (
 type Choice struct {
 	Name    string   `json:"name"`
 	Type    string   `json:"type"`
-	Limit   int      `json:"limit"`
 	Options []string `json:"options"`
 }
 

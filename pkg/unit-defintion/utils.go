@@ -65,7 +65,6 @@ func luaTableToChoices(tbl *lua.LTable) []Choice {
 	tbl.ForEach(func(_, v lua.LValue) {
 		if entry, ok := v.(*lua.LTable); ok {
 			c := Choice{
-				Limit:   1,   // дефолтное значение
 				Options: nil, // дефолтное значение
 			}
 
@@ -76,10 +75,6 @@ func luaTableToChoices(tbl *lua.LTable) []Choice {
 					c.Name = val.String()
 				case "type":
 					c.Type = val.String()
-				case "limit":
-					if num, ok := val.(lua.LNumber); ok {
-						c.Limit = int(num)
-					}
 				case "options":
 					if arr, ok := val.(*lua.LTable); ok {
 						c.Options = luaTableToStringSlice(arr)

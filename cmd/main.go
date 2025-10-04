@@ -10,23 +10,23 @@ import (
 	"strings"
 )
 
-// CollectInputFromChoices — запрашивает ввод пользователя для всех Choice
 func CollectInputFromChoices(choices []unitDefintion.Choice) map[string]interface{} {
 	reader := bufio.NewReader(os.Stdin)
 	results := make(map[string]interface{})
 
 	for _, ch := range choices {
 		for {
-			fmt.Printf("Введите значение для '%s' (%s): ", ch.Name, ch.Type)
-			input, _ := reader.ReadString('\n')
-			input = strings.TrimSpace(input)
-
-			if ch.Type == "string" {
-				results[ch.Name] = input
+			switch ch.Type {
+			case "string":
+				fmt.Printf("Введите значение для '%s' (string): ", ch.Name)
+				input, _ := reader.ReadString('\n')
+				results[ch.Name] = strings.TrimSpace(input)
 				break
-			}
 
-			if ch.Type == "int" {
+			case "int":
+				fmt.Printf("Введите значение для '%s' (int): ", ch.Name)
+				input, _ := reader.ReadString('\n')
+				input = strings.TrimSpace(input)
 				val, err := strconv.Atoi(input)
 				if err != nil {
 					fmt.Println("❌ Ошибка: нужно ввести целое число.")
@@ -34,11 +34,41 @@ func CollectInputFromChoices(choices []unitDefintion.Choice) map[string]interfac
 				}
 				results[ch.Name] = val
 				break
+
+			case "select":
+				if len(ch.Options) == 0 {
+					fmt.Printf("⚠️  '%s' имеет тип 'select', но без options — пропуск.\n", ch.Name)
+					break
+				}
+
+				fmt.Printf("\nВыберите значение для '%s':\n", ch.Name)
+				for i, opt := range ch.Options {
+					fmt.Printf("  %d) %s\n", i+1, opt)
+				}
+
+				var choiceIndex int
+				for {
+					fmt.Printf("Введите номер (1-%d): ", len(ch.Options))
+					input, _ := reader.ReadString('\n')
+					input = strings.TrimSpace(input)
+					num, err := strconv.Atoi(input)
+					if err != nil || num < 1 || num > len(ch.Options) {
+						fmt.Println("❌ Ошибка: введите корректный номер варианта.")
+						continue
+					}
+					choiceIndex = num - 1
+					break
+				}
+
+				results[ch.Name] = ch.Options[choiceIndex]
+				break
+
+			default:
+				fmt.Printf("⚠️  Тип '%s' не поддерживается, пропускаем '%s'.\n", ch.Type, ch.Name)
+				break
 			}
 
-			// если тип неизвестен
-			fmt.Printf("⚠️  Тип '%s' не поддерживается, пропускаем.\n", ch.Type)
-			break
+			break // выходим из внутреннего цикла, если всё успешно
 		}
 	}
 
@@ -46,7 +76,7 @@ func CollectInputFromChoices(choices []unitDefintion.Choice) map[string]interfac
 }
 
 func getTemplate(template string) string {
-	data, err := os.ReadFile("unit-definition/" + template + "/" + template + ".lua")
+	data, err := os.ReadFile("unit-definition/" + template + ".lua")
 	if err != nil {
 		panic(err)
 	}
@@ -60,8 +90,9 @@ func main() {
 	equipmentTable := L.NewTable()
 
 	templates := []string{
-		"base",
-		"character",
+		"base/base",
+		"character/character",
+		"races/human",
 	}
 
 	var attributes interface{}

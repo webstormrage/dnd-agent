@@ -25,26 +25,26 @@ function unitDefinition(attributes, equipment, options)
 end
 
 function optionsDefinition(attributes, choices)
-    choices.insert({
-        name='second-language',
-        type='select',
-        options= {
-            'abyssal',
-            'celestial',
-            'draconic',
-            'deep-speech',
-            'infernal',
-            'primordial',
-            'sylvan',
-            'undercommon',
-            'common',
-            'dwarvish',
-            'elvish',
-            'giant',
-            'gnomish',
-            'goblin',
-            'halfling',
-            'orc'
+    table.insert(choices, {
+        name = 'second-language',
+        type = 'select',
+        options = {
+            'language-abyssal',
+            'language-celestial',
+            'language-draconic',
+            'language-deep-speech',
+            'language-infernal',
+            'language-primordial',
+            'language-sylvan',
+            'language-undercommon',
+            'language-common',
+            'language-dwarvish',
+            'language-elvish',
+            'language-giant',
+            'language-gnomish',
+            'language-goblin',
+            'language-halfling',
+            'language-orc'
         }
     })
 end

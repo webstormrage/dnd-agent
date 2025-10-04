@@ -20,22 +20,22 @@ function optionsDefinition(attributes, choices)
         name='language',
         type='select',
         options= {
-            'abyssal',
-            'celestial',
-            'draconic',
-            'deep-speech',
-            'infernal',
-            'primordial',
-            'sylvan',
-            'undercommon',
-            'common',
-            'dwarvish',
-            'elvish',
-            'giant',
-            'gnomish',
-            'goblin',
-            'halfling',
-            'orc'
+            'language-abyssal',
+            'language-celestial',
+            'language-draconic',
+            'language-deep-speech',
+            'language-infernal',
+            'language-primordial',
+            'language-sylvan',
+            'language-undercommon',
+            'language-common',
+            'language-dwarvish',
+            'language-elvish',
+            'language-giant',
+            'language-gnomish',
+            'language-goblin',
+            'language-halfling',
+            'language-orc'
         }
     })
     choices.insert({

@@ -26,8 +26,8 @@ function unitDefinition(attributes, equipment, options)
     attributes['proficiencies']['heavy-armor'] = true
     attributes['proficiencies']['strength-save'] = true
     attributes['proficiencies']['constitution-save'] = true
-    attributes['proficiencies'][options.skills[1]] = true
-    attributes['proficiencies'][options.skills[2]] = true
+    attributes['proficiencies'][options['primary-skill']] = true
+    attributes['proficiencies'][options['secondary-skill']] = true
 
     -- Бонус мастерства
     if attributes['proficiency-bonus'] == nil then
@@ -60,9 +60,9 @@ function unitDefinition(attributes, equipment, options)
             equipment['arrow'] = (equipment['arrow'] or 0) + 20
         end
 
-        local weapon1 = options['melee'][1]
+        local weapon1 = options['primary-melee']
         equipment[weapon1] = (equipment[weapon1] or 0) + 1
-        local weapon2 = options['melee'][2]
+        local weapon2 = options['secondary-melee']
         equipment[weapon2] = (equipment[weapon2] or 0) + 1
 
         if options['ranged'] == 'crossbow-set' then
@@ -100,11 +100,10 @@ function unitDefinition(attributes, equipment, options)
 end
 
 function optionsDefinition(attributes, choices)
-    choices.insert({
-        name='skills',
-        limit=2,
-        type='multi-select',
-        options={
+    table.insert(choices, {
+        name = 'primary-skill',
+        type = 'select',
+        options = {
             'acrobatics',
             'animal-handling',
             'athletics',
@@ -115,10 +114,26 @@ function optionsDefinition(attributes, choices)
             'survival'
         }
     })
-    choices.insert({
-        name='feats',
-        type='select',
-        options={
+
+    table.insert(choices, {
+        name = 'secondary-skill',
+        type = 'select',
+        options = {
+            'acrobatics',
+            'animal-handling',
+            'athletics',
+            'history',
+            'insight',
+            'intimidation',
+            'perception',
+            'survival'
+        }
+    })
+
+    table.insert(choices, {
+        name = 'feats',
+        type = 'select',
+        options = {
             'fighting-style-archery',
             'fighting-style-defense',
             'fighting-style-great-weapon-fighting',
@@ -126,19 +141,20 @@ function optionsDefinition(attributes, choices)
             'fighting-style-two-weapon-fighting'
         }
     })
-    choices.insert({
-        name='armor',
-        type='select',
-        options={
+
+    table.insert(choices, {
+        name = 'armor',
+        type = 'select',
+        options = {
             'heavy-set',
             'light-set'
         }
     })
-    choices.insert({
-        name='melee',
-        type='multi-select',
-        limit=2,
-        options={
+
+    table.insert(choices, {
+        name = 'primary-melee',
+        type = 'select',
+        options = {
             'battleaxe',
             'flail',
             'glaive',
@@ -160,18 +176,46 @@ function optionsDefinition(attributes, choices)
             'shield'
         }
     })
-    choices.insert({
-        name='ranged',
-        type='select',
-        options={
+
+    table.insert(choices, {
+        name = 'secondary-melee',
+        type = 'select',
+        options = {
+            'battleaxe',
+            'flail',
+            'glaive',
+            'greataxe',
+            'greatsword',
+            'halberd',
+            'lance',
+            'longsword',
+            'maul',
+            'morningstar',
+            'pike',
+            'rapier',
+            'scimitar',
+            'shortsword',
+            'trident',
+            'war-pick',
+            'warhammer',
+            'whip',
+            'shield'
+        }
+    })
+
+    table.insert(choices, {
+        name = 'ranged',
+        type = 'select',
+        options = {
             'crossbow-set',
             'axe-set'
         }
     })
-    choices.insert({
-        name='pack',
-        type='select',
-        options={
+
+    table.insert(choices, {
+        name = 'pack',
+        type = 'select',
+        options = {
             'explorer-pack',
             'dungeon-pack'
         }
