@@ -1,4 +1,4 @@
-function unitDefinition(attributes, equipment, options)
+function unitDefinition(attributes, inventory, options)
     -- Раса может быть только одна
     if attributes['race'] ~= nil then
         return

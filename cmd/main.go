@@ -87,12 +87,13 @@ func main() {
 	L := lua.NewState()
 
 	attrTable := L.NewTable()
-	equipmentTable := L.NewTable()
+	inventoryTable := L.NewTable()
 
 	templates := []string{
 		"base/base",
 		"character/character",
 		"races/human",
+		"backgrounds/outlander",
 	}
 
 	var attributes interface{}
@@ -103,7 +104,7 @@ func main() {
 			L,
 			getTemplate(template),
 			attrTable,
-			equipmentTable,
+			inventoryTable,
 			CollectInputFromChoices,
 		)
 

@@ -1,5 +1,5 @@
 
-function unitDefinition(attributes, equipment, options)
+function unitDefinition(attributes, inventory, options)
     -- Требования мультикласса
     if  attributes['base-class'] == nil
             and attributes['strength'] < 13
@@ -53,44 +53,44 @@ function unitDefinition(attributes, equipment, options)
     if attributes['base-class'] == nil then
 
         if options['armor'] == 'heavy-set' then
-            equipment['chain-mail'] = (equipment['chain-mail'] or 0) + 1
+            inventory['chain-mail'] = (inventory['chain-mail'] or 0) + 1
         else
-            equipment['leather-armor'] = (equipment['leather-armor'] or 0) + 1
-            equipment['longbow'] = (equipment['longbow'] or 0) + 1
-            equipment['arrow'] = (equipment['arrow'] or 0) + 20
+            inventory['leather-armor'] = (inventory['leather-armor'] or 0) + 1
+            inventory['longbow'] = (inventory['longbow'] or 0) + 1
+            inventory['arrow'] = (inventory['arrow'] or 0) + 20
         end
 
         local weapon1 = options['primary-melee']
-        equipment[weapon1] = (equipment[weapon1] or 0) + 1
+        inventory[weapon1] = (inventory[weapon1] or 0) + 1
         local weapon2 = options['secondary-melee']
-        equipment[weapon2] = (equipment[weapon2] or 0) + 1
+        inventory[weapon2] = (inventory[weapon2] or 0) + 1
 
         if options['ranged'] == 'crossbow-set' then
-            equipment['light-crossbow'] = (equipment['light-crossbow'] or 0) + 1
-            equipment['bolt'] = (equipment['bolt'] or 0) + 20
+            inventory['light-crossbow'] = (inventory['light-crossbow'] or 0) + 1
+            inventory['bolt'] = (inventory['bolt'] or 0) + 20
         else
-            equipment['handaxe'] = (equipment['handaxe'] or 0) + 1
+            inventory['handaxe'] = (inventory['handaxe'] or 0) + 1
         end
 
         if options['pack'] == 'dungeon-pack' then
-            equipment['backpack'] = (equipment['backpack'] or 0) + 1
-            equipment['crowbar'] = (equipment['crowbar'] or 0) + 1
-            equipment['hammer'] = (equipment['hammer'] or 0) + 1
-            equipment['piton'] = (equipment['piton'] or 0) + 10
-            equipment['torch'] = (equipment['torch'] or 0) + 10
-            equipment['daily-ration'] = (equipment['daily-ration'] or 0) + 10
-            equipment['tinderbox'] = (equipment['tinderbox'] or 0) + 1
-            equipment['waterskin'] = (equipment['waterskin'] or 0) + 1
-            equipment['hempen-rope'] = (equipment['hempen-rope'] or 0) + 1
+            inventory['backpack'] = (inventory['backpack'] or 0) + 1
+            inventory['crowbar'] = (inventory['crowbar'] or 0) + 1
+            inventory['hammer'] = (inventory['hammer'] or 0) + 1
+            inventory['piton'] = (inventory['piton'] or 0) + 10
+            inventory['torch'] = (inventory['torch'] or 0) + 10
+            inventory['daily-ration'] = (inventory['daily-ration'] or 0) + 10
+            inventory['tinderbox'] = (inventory['tinderbox'] or 0) + 1
+            inventory['waterskin'] = (inventory['waterskin'] or 0) + 1
+            inventory['hempen-rope'] = (inventory['hempen-rope'] or 0) + 1
         else
-            equipment['backpack'] = (equipment['backpack'] or 0) + 1
-            equipment['bedroll'] = (equipment['bedroll'] or 0) + 1
-            equipment['flask-of-oil'] = (equipment['flask-of-oil'] or 0) + 1
-            equipment['torch'] = (equipment['torch'] or 0) + 10
-            equipment['daily-ration'] = (equipment['daily-ration'] or 0) + 10
-            equipment['tinderbox'] = (equipment['tinderbox'] or 0) + 1
-            equipment['waterskin'] = (equipment['waterskin'] or 0) + 1
-            equipment['rope'] = (equipment['rope'] or 0) + 1
+            inventory['backpack'] = (inventory['backpack'] or 0) + 1
+            inventory['bedroll'] = (inventory['bedroll'] or 0) + 1
+            inventory['flask-of-oil'] = (inventory['flask-of-oil'] or 0) + 1
+            inventory['torch'] = (inventory['torch'] or 0) + 10
+            inventory['daily-ration'] = (inventory['daily-ration'] or 0) + 10
+            inventory['tinderbox'] = (inventory['tinderbox'] or 0) + 1
+            inventory['waterskin'] = (inventory['waterskin'] or 0) + 1
+            inventory['rope'] = (inventory['rope'] or 0) + 1
         end
     end
 

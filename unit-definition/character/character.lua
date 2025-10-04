@@ -1,4 +1,4 @@
-function unitDefinition(attributes, equipment, options)
+function unitDefinition(attributes, inventory, options)
     attributes['strength'] = math.min(options['strength'], 18)
     attributes['constitution'] = math.min(options['constitution'], 18)
     attributes['dexterity'] = math.min(options['dexterity'], 18)

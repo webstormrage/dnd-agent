@@ -1,4 +1,4 @@
-function unitDefinition(attributes, equipment, options)
+function unitDefinition(attributes, inventory, options)
     -- Владения
     if attributes['proficiencies'] == nil then
         attributes['proficiencies'] = {}
@@ -9,17 +9,17 @@ function unitDefinition(attributes, equipment, options)
     attributes['proficiencies'][options['musical-skill']] = true
 
     -- Экипировка
-    equipment['staff'] = (equipment['staff'] or 0) + 1
-    equipment['hunting-trap'] = (equipment['hunting-trap'] or 0) + 1
-    equipment['traveler-cloth'] = (equipment['traveler-cloth'] or 0) + 1
-    equipment['coins'] = (equipment['coins'] or 0) + 1000
+    inventory['staff'] = (inventory['staff'] or 0) + 1
+    inventory['hunting-trap'] = (inventory['hunting-trap'] or 0) + 1
+    inventory['traveler-cloth'] = (inventory['traveler-cloth'] or 0) + 1
+    inventory['coins'] = (inventory['coins'] or 0) + 1000
 end
 
 function optionsDefinition(attributes, choices)
-    choices.insert({
-        name='language',
-        type='select',
-        options= {
+    table.insert(choices, {
+        name = 'language',
+        type = 'select',
+        options = {
             'language-abyssal',
             'language-celestial',
             'language-draconic',
@@ -38,7 +38,8 @@ function optionsDefinition(attributes, choices)
             'language-orc'
         }
     })
-    choices.insert({
+
+    table.insert(choices, {
         name = 'musical-skill',
         type = 'select',
         options = {

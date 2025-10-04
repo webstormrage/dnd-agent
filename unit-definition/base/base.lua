@@ -1,4 +1,4 @@
-function unitDefinition(attributes, equipment, options)
+function unitDefinition(attributes, inventory, options)
     -- Действия
     if attributes['actions'] == nil then
         attributes['actions'] = {}

@@ -25,7 +25,7 @@ func ProcessUnitDefinition(
 	L *lua.LState,
 	luaCode string,
 	attrTable *lua.LTable,
-	equipmentTable *lua.LTable,
+	inventoryTable *lua.LTable,
 	handleChoices HandleChoicesFunc,
 ) (interface{}, error) {
 
@@ -45,7 +45,7 @@ func ProcessUnitDefinition(
 	optionsTable := MapToLuaTable(L, results)
 
 	// Выполняем основное определение
-	attributes, err := RunDefinition(L, luaCode, attrTable, equipmentTable, optionsTable)
+	attributes, err := RunDefinition(L, luaCode, attrTable, inventoryTable, optionsTable)
 	if err != nil {
 		return nil, fmt.Errorf("ошибка при выполнении RunDefinition: %v", err)
 	}
@@ -53,7 +53,7 @@ func ProcessUnitDefinition(
 	return attributes, nil
 }
 
-func RunDefinition(L *lua.LState, luaCode string, attributesTable, equipmentTable, optionsTable *lua.LTable) (interface{}, error) {
+func RunDefinition(L *lua.LState, luaCode string, attributesTable, inventoryTable, optionsTable *lua.LTable) (interface{}, error) {
 
 	// Выполняем Lua-код из строки
 	if err := L.DoString(luaCode); err != nil {
@@ -70,7 +70,7 @@ func RunDefinition(L *lua.LState, luaCode string, attributesTable, equipmentTabl
 		Fn:      fn,
 		NRet:    0,
 		Protect: true,
-	}, attributesTable, equipmentTable, optionsTable); err != nil {
+	}, attributesTable, inventoryTable, optionsTable); err != nil {
 		return nil, fmt.Errorf("ошибка при вызове Lua-функции: %v", err)
 	}
 
