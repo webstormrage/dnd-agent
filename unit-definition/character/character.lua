@@ -9,32 +9,32 @@ function unitDefinition(attributes, equipment, options)
 end
 
 function optionsDefinition(attributes, choices)
-    choices.insert({
-        name='name',
-        type='string'
+    table.insert(choices, {
+        name = 'name',
+        type = 'string'
     })
-    choices.insert({
-      name='strength',
-      type='int'
+    table.insert(choices, {
+        name = 'strength',
+        type = 'int'
     })
-    choices.insert({
-        name='constitution',
-        type='int'
+    table.insert(choices, {
+        name = 'constitution',
+        type = 'int'
     })
-    choices.insert({
-        name='dexterity',
-        type='int'
+    table.insert(choices, {
+        name = 'dexterity',
+        type = 'int'
     })
-    choices.insert({
-        name='intelligence',
-        type='int'
+    table.insert(choices, {
+        name = 'intelligence',
+        type = 'int'
     })
-    choices.insert({
-        name='charisma',
-        type='int'
+    table.insert(choices, {
+        name = 'charisma',
+        type = 'int'
     })
-    choices.insert({
-        name='wisdom',
-        type='int'
+    table.insert(choices, {
+        name = 'wisdom',
+        type = 'int'
     })
 end
