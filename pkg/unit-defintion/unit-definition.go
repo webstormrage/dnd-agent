@@ -1,20 +1,16 @@
 package unitDefintion
 
 import (
+	"dnd-agent/pkg/domain"
+	"dnd-agent/pkg/utils"
 	"encoding/json"
 	"fmt"
 
 	lua "github.com/yuin/gopher-lua"
 )
 
-type Choice struct {
-	Name    string   `json:"name"`
-	Type    string   `json:"type"`
-	Options []string `json:"options"`
-}
-
 // HandleChoicesFunc — callback, который обрабатывает []Choice и возвращает map[string]interface{}
-type HandleChoicesFunc func(choices []Choice) map[string]interface{}
+type HandleChoicesFunc func(choices []domain.Choice) map[string]interface{}
 
 // ProcessUnitDefinition — обобщённая функция для полного цикла:
 // 1. Получение choices из Lua,
@@ -42,7 +38,7 @@ func ProcessUnitDefinition(
 	results := handleChoices(choices)
 
 	// Преобразуем результат обратно в Lua-таблицу
-	optionsTable := MapToLuaTable(L, results)
+	optionsTable := utils.MapToLuaTable(L, results)
 
 	// Выполняем основное определение
 	attributes, inventory, err := RunDefinition(L, luaCode, attrTable, inventoryTable, optionsTable)
@@ -74,10 +70,10 @@ func RunDefinition(L *lua.LState, luaCode string, attributesTable, inventoryTabl
 		return nil, nil, fmt.Errorf("ошибка при вызове Lua-функции: %v", err)
 	}
 
-	return luaTableToMap(attributesTable), luaTableToMap(inventoryTable), nil
+	return utils.LuaTableToInterface(attributesTable), utils.LuaTableToInterface(inventoryTable), nil
 }
 
-func GetChoices(L *lua.LState, luaCode string, attributes *lua.LTable, choices *lua.LTable) ([]Choice, error) {
+func GetChoices(L *lua.LState, luaCode string, attributes *lua.LTable, choices *lua.LTable) ([]domain.Choice, error) {
 
 	// Выполняем Lua-код из строки
 	if err := L.DoString(luaCode); err != nil {
@@ -86,7 +82,7 @@ func GetChoices(L *lua.LState, luaCode string, attributes *lua.LTable, choices *
 
 	fn := L.GetGlobal("optionsDefinition")
 	if fn.Type() != lua.LTFunction {
-		return luaTableToChoices(choices), nil
+		return utils.LuaTableToChoices(choices), nil
 	}
 
 	if err := L.CallByParam(lua.P{
@@ -97,7 +93,7 @@ func GetChoices(L *lua.LState, luaCode string, attributes *lua.LTable, choices *
 		return nil, fmt.Errorf("ошибка при вызове Lua-функции: %v", err)
 	}
 
-	return luaTableToChoices(choices), nil
+	return utils.LuaTableToChoices(choices), nil
 }
 
 func PrettyPrintJSON(data interface{}) string {

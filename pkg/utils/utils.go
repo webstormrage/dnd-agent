@@ -1,11 +1,13 @@
-package unitDefintion
+package utils
 
 import (
+	"dnd-agent/pkg/domain"
+	"encoding/json"
 	"fmt"
 	lua "github.com/yuin/gopher-lua"
 )
 
-func luaTableToMap(tbl *lua.LTable) interface{} {
+func LuaTableToInterface(tbl *lua.LTable) interface{} {
 	// Проверяем, выглядит ли таблица как массив
 	isArray := true
 	maxIndex := 0
@@ -28,7 +30,7 @@ func luaTableToMap(tbl *lua.LTable) interface{} {
 		slice := make([]interface{}, length)
 		for i := 1; i <= length; i++ {
 			val := tbl.RawGetInt(i)
-			slice[i-1] = luaValueToInterface(val)
+			slice[i-1] = LuaValueToInterface(val)
 		}
 		return slice
 	}
@@ -37,13 +39,22 @@ func luaTableToMap(tbl *lua.LTable) interface{} {
 	result := make(map[string]interface{})
 	tbl.ForEach(func(k, v lua.LValue) {
 		key := k.String()
-		result[key] = luaValueToInterface(v)
+		result[key] = LuaValueToInterface(v)
+	})
+	return result
+}
+
+func LuaTableToMap(tbl *lua.LTable) map[string]interface{} {
+	result := make(map[string]interface{})
+	tbl.ForEach(func(k, v lua.LValue) {
+		key := k.String()
+		result[key] = LuaValueToInterface(v)
 	})
 	return result
 }
 
 // Вспомогательная функция для конвертации значения
-func luaValueToInterface(v lua.LValue) interface{} {
+func LuaValueToInterface(v lua.LValue) interface{} {
 	switch value := v.(type) {
 	case lua.LNumber:
 		return float64(value)
@@ -52,19 +63,19 @@ func luaValueToInterface(v lua.LValue) interface{} {
 	case lua.LBool:
 		return bool(value)
 	case *lua.LTable:
-		return luaTableToMap(value)
+		return LuaTableToInterface(value)
 	default:
 		return fmt.Sprintf("<unsupported:%s>", value.Type().String())
 	}
 }
 
 // luaTableToChoices — конвертирует таблицу Lua в []Choice
-func luaTableToChoices(tbl *lua.LTable) []Choice {
-	var result []Choice
+func LuaTableToChoices(tbl *lua.LTable) []domain.Choice {
+	var result []domain.Choice
 
 	tbl.ForEach(func(_, v lua.LValue) {
 		if entry, ok := v.(*lua.LTable); ok {
-			c := Choice{
+			c := domain.Choice{
 				Options: nil, // дефолтное значение
 			}
 
@@ -77,7 +88,7 @@ func luaTableToChoices(tbl *lua.LTable) []Choice {
 					c.Type = val.String()
 				case "options":
 					if arr, ok := val.(*lua.LTable); ok {
-						c.Options = luaTableToStringSlice(arr)
+						c.Options = LuaTableToStringSlice(arr)
 					}
 				}
 			})
@@ -90,7 +101,7 @@ func luaTableToChoices(tbl *lua.LTable) []Choice {
 }
 
 // luaTableToStringSlice — конвертирует Lua-массив строк в []string
-func luaTableToStringSlice(tbl *lua.LTable) []string {
+func LuaTableToStringSlice(tbl *lua.LTable) []string {
 	var res []string
 	tbl.ForEach(func(_, v lua.LValue) {
 		res = append(res, v.String())
@@ -150,4 +161,24 @@ func SliceToLuaTable(L *lua.LState, data []interface{}) *lua.LTable {
 		}
 	}
 	return tbl
+}
+
+// LuaTableToCommands — преобразует Lua-таблицу next в срез []Command.
+func LuaTableToCommands(tbl *lua.LTable) []domain.Command {
+	var cmds []domain.Command
+
+	tbl.ForEach(func(_ lua.LValue, v lua.LValue) {
+		t, ok := v.(*lua.LTable)
+		if !ok {
+			return
+		}
+		m := LuaTableToInterface(t)
+		js, _ := json.Marshal(m)
+		var c domain.Command
+		if err := json.Unmarshal(js, &c); err == nil {
+			cmds = append(cmds, c)
+		}
+	})
+
+	return cmds
 }

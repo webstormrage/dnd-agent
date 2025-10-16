@@ -7,6 +7,8 @@ function unitDefinition(attributes, inventory, options)
     local actions = attributes['actions']
     actions['move'] = true
     actions['attack'] = true
+    actions['equip'] = true
+    actions['non-lethal-attack'] = true
     actions['secondary-attack'] = true
     actions['dash'] = true
     actions['disengage'] = true

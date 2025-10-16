@@ -1,121 +1,170 @@
 package main
 
 import (
-	"bufio"
-	"dnd-agent/pkg/unit-defintion"
+	characterCreation "dnd-agent/pkg/character-creation"
+	"dnd-agent/pkg/domain"
+	"dnd-agent/pkg/utils"
 	"fmt"
 	lua "github.com/yuin/gopher-lua"
 	"os"
-	"strconv"
-	"strings"
 )
 
-func CollectInputFromChoices(choices []unitDefintion.Choice) map[string]interface{} {
-	reader := bufio.NewReader(os.Stdin)
-	results := make(map[string]interface{})
+func CallLuaProcedure(script string, procedure string, ctx map[string]interface{}) (map[string]interface{}, error) {
+	L := lua.NewState()
+	defer L.Close()
 
-	for _, ch := range choices {
-		for {
-			switch ch.Type {
-			case "string":
-				fmt.Printf("Введите значение для '%s' (string): ", ch.Name)
-				input, _ := reader.ReadString('\n')
-				results[ch.Name] = strings.TrimSpace(input)
-				break
-
-			case "int":
-				fmt.Printf("Введите значение для '%s' (int): ", ch.Name)
-				input, _ := reader.ReadString('\n')
-				input = strings.TrimSpace(input)
-				val, err := strconv.Atoi(input)
-				if err != nil {
-					fmt.Println("❌ Ошибка: нужно ввести целое число.")
-					continue
-				}
-				results[ch.Name] = val
-				break
-
-			case "select":
-				if len(ch.Options) == 0 {
-					fmt.Printf("⚠️  '%s' имеет тип 'select', но без options — пропуск.\n", ch.Name)
-					break
-				}
-
-				fmt.Printf("\nВыберите значение для '%s':\n", ch.Name)
-				for i, opt := range ch.Options {
-					fmt.Printf("  %d) %s\n", i+1, opt)
-				}
-
-				var choiceIndex int
-				for {
-					fmt.Printf("Введите номер (1-%d): ", len(ch.Options))
-					input, _ := reader.ReadString('\n')
-					input = strings.TrimSpace(input)
-					num, err := strconv.Atoi(input)
-					if err != nil || num < 1 || num > len(ch.Options) {
-						fmt.Println("❌ Ошибка: введите корректный номер варианта.")
-						continue
-					}
-					choiceIndex = num - 1
-					break
-				}
-
-				results[ch.Name] = ch.Options[choiceIndex]
-				break
-
-			default:
-				fmt.Printf("⚠️  Тип '%s' не поддерживается, пропускаем '%s'.\n", ch.Type, ch.Name)
-				break
-			}
-
-			break // выходим из внутреннего цикла, если всё успешно
-		}
+	// Загружаем скрипт
+	if err := L.DoString(script); err != nil {
+		return nil, fmt.Errorf("ошибка загрузки скрипта: %v", err)
 	}
 
-	return results
+	// Получаем ссылку на функцию
+	fn := L.GetGlobal(procedure)
+	if fn.Type() != lua.LTFunction {
+		return nil, fmt.Errorf("функция %q не найдена в скрипте", procedure)
+	}
+
+	// Преобразуем ctx (Go) → Lua-таблицу
+	ctxTbl := utils.MapToLuaTable(L, ctx)
+
+	// Вызываем Lua-функцию (без ожидания возвращаемого значения)
+	if err := L.CallByParam(lua.P{
+		Fn:      fn,
+		NRet:    0,
+		Protect: true,
+	}, ctxTbl); err != nil {
+		return nil, fmt.Errorf("ошибка вызова функции %s: %v", procedure, err)
+	}
+
+	// После выполнения функция могла изменить ctxTbl внутри Lua.
+	// Преобразуем обратно Lua-таблицу → Go map
+	result := utils.LuaTableToMap(ctxTbl)
+
+	return result, nil
 }
 
-func getTemplate(template string) string {
-	data, err := os.ReadFile("lua/unit-definition/" + template + ".lua")
+func CallLuaHandler(scriptPath, handlerName string, ctxIn map[string]interface{}) ([]domain.Command, error) {
+	data, err := os.ReadFile(scriptPath)
 	if err != nil {
 		panic(err)
 	}
-	return string(data)
+	script := string(data)
+
+	ctxOut, err := CallLuaProcedure(script, handlerName, ctxIn)
+	if err != nil {
+		panic(err)
+	}
+
+	cmds, ok := ctxOut["next"].([]domain.Command)
+	if !ok {
+		return nil, fmt.Errorf("ожидался []domain.Command, а получен %T", ctxOut["next"])
+	}
+
+	if len(cmds) == 0 {
+		return nil, nil
+	}
+	return cmds, nil
+}
+
+var character *domain.Unit
+
+func HandleCommand(w *domain.World, cmd []domain.Command) []domain.Command {
+	if len(cmd) == 0 {
+		return cmd
+	}
+	command := cmd[0]
+	rest := cmd[1:]
+	switch command.Command {
+	case "Scenario.start":
+		// TODO: заменить на проверку наличия игроков под контролем игрока
+		_, exists := w.Units[1]
+		if exists {
+			return rest
+		}
+		next, err := CallLuaHandler(
+			"lua/scenario/init.lua",
+			"Scenario.start",
+			map[string]interface{}{
+				"next": []domain.Command{},
+			})
+		if err != nil {
+			fmt.Println(err)
+			return rest
+		}
+		rest = append(rest, next...)
+		return rest
+	case "Character.create":
+		// TODO: здесь будет ожидание запроса с клиента
+		character = characterCreation.ScanCharacter()
+		// TODO: здесь сохранение в базу
+		character.ID = 1
+		w.Units[character.ID] = character
+		rest = append(rest, domain.Command{Command: "Character.On.create", CharacterOnCreate: &domain.CharacterOnCreateCommand{UnitId: character.ID}})
+		return rest
+	case "Character.On.create":
+		next, err := CallLuaHandler(
+			"lua/scenario/init.lua",
+			"Scenario.start",
+			map[string]interface{}{
+				"next": []domain.Command{},
+				"characterOnCreate": map[string]interface{}{
+					"unitId": command.CharacterOnCreate.UnitId,
+				},
+			},
+		)
+		if err != nil {
+			fmt.Println(err)
+			return rest
+		}
+		rest = append(rest, next...)
+		return rest
+	case "Unit.spawn":
+		id := command.UnitSpawn.UnitId
+		w.Units[id].X = command.UnitSpawn.X
+		w.Units[id].X = command.UnitSpawn.X
+		w.Units[id].Owner = command.UnitSpawn.Owner
+		w.Units[id].ZoneId = &command.UnitSpawn.GameZoneId
+		return rest
+	default:
+		fmt.Println("Неизвестная команда: %s\n", command.Command)
+		return rest
+	}
 }
 
 func main() {
-	L := lua.NewState()
-
-	attrTable := L.NewTable()
-	inventoryTable := L.NewTable()
-
-	templates := []string{
-		"base/base",
-		"abilities/abilities",
-		"races/human",
-		"backgrounds/outlander",
-		"classes/fighter-1",
-		"character/character",
+	w := &domain.World{
+		Units: make(map[int]*domain.Unit),
 	}
 
-	var attributes interface{}
-	var inventory interface{}
-	var err error
+	queue := []domain.Command{}
 
-	for _, template := range templates {
-		attributes, inventory, err = unitDefintion.ProcessUnitDefinition(
-			L,
-			getTemplate(template),
-			attrTable,
-			inventoryTable,
-			CollectInputFromChoices,
-		)
+	fmt.Println("DnDAI запущен")
 
-		if err != nil {
-			panic(err)
+	for {
+		// Пока есть команды в очереди — обрабатываем их
+		for len(queue) > 0 {
+			queue = HandleCommand(w, queue)
 		}
-	}
 
-	fmt.Println(unitDefintion.PrettyPrintJSON(attributes))
-	fmt.Println(unitDefintion.PrettyPrintJSON(inventory))
+		// Очередь пуста — ждём ввод пользователя
+		fmt.Print("> ")
+		var input string
+		_, err := fmt.Scanln(&input)
+		if err != nil {
+			// Если пустая строка — просто пропускаем
+			if err.Error() == "unexpected newline" {
+				continue
+			}
+			fmt.Println("Ошибка ввода:", err)
+			continue
+		}
+
+		if input == "exit" || input == "quit" {
+			fmt.Println("Завершение работы.")
+			break
+		}
+
+		// Добавляем введённую команду в очередь
+		queue = append(queue, domain.Command{Command: input})
+	}
 }
