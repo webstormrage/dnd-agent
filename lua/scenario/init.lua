@@ -3,13 +3,14 @@ handlers = {}
 handlers['Scenario.start'] = function(ctx)
     -- подготовка карт уровней
     table.insert(ctx.next, {
-        command='create-character'
+        command='Character.create'
     })
 end
 
+-- TODO listeners['Character.create']
 handlers['Character.On.create'] = function(ctx)
     table.insert(ctx.next, {
-        command='spawn',
+        command='Unit.spawn',
         spawn={
             unitId=ctx.characterOnCreate.unitId,
             gameZoneId='frey-pastion',

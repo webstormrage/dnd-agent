@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	lua "github.com/yuin/gopher-lua"
+	"reflect"
 )
 
 func LuaTableToInterface(tbl *lua.LTable) interface{} {
@@ -135,10 +136,53 @@ func MapToLuaTable(L *lua.LState, data map[string]interface{}) *lua.LTable {
 			}
 			L.SetField(tbl, k, SliceToLuaTable(L, arr))
 		default:
-			// игнорируем неподдерживаемые типы
+			// Доп. обработка структур или срезов структур
+			rv := reflect.ValueOf(value)
+			switch rv.Kind() {
+			case reflect.Slice:
+				// универсальная поддержка любых []T
+				L.SetField(tbl, k, GenericSliceToLua(L, rv))
+			case reflect.Struct:
+				// превращаем структуру в таблицу
+				L.SetField(tbl, k, StructToLuaTable(L, value))
+			default:
+				// игнорируем неподдерживаемые типы
+			}
 		}
 	}
 	return tbl
+}
+
+// GenericSliceToLua — конвертирует []T в lua.LTable (через JSON для универсальности)
+func GenericSliceToLua(L *lua.LState, rv reflect.Value) *lua.LTable {
+	tbl := L.NewTable()
+	for i := 0; i < rv.Len(); i++ {
+		item := rv.Index(i).Interface()
+		switch val := item.(type) {
+		case map[string]interface{}:
+			tbl.Append(MapToLuaTable(L, val))
+		default:
+			// попытаемся превратить любую структуру в map[string]interface{}
+			m := make(map[string]interface{})
+			b, err := json.Marshal(val)
+			if err == nil {
+				_ = json.Unmarshal(b, &m)
+				tbl.Append(MapToLuaTable(L, m))
+			}
+		}
+	}
+	return tbl
+}
+
+// StructToLuaTable — конвертирует структуру в lua.LTable через JSON
+func StructToLuaTable(L *lua.LState, v interface{}) *lua.LTable {
+	m := make(map[string]interface{})
+	b, err := json.Marshal(v)
+	if err != nil {
+		return L.NewTable()
+	}
+	_ = json.Unmarshal(b, &m)
+	return MapToLuaTable(L, m)
 }
 
 // SliceToLuaTable — преобразует []interface{} в *lua.LTable
@@ -157,7 +201,13 @@ func SliceToLuaTable(L *lua.LState, data []interface{}) *lua.LTable {
 		case map[string]interface{}:
 			tbl.Append(MapToLuaTable(L, value))
 		default:
-			// пропускаем неизвестные типы
+			// универсальная сериализация (на случай структур)
+			m := make(map[string]interface{})
+			b, err := json.Marshal(value)
+			if err == nil {
+				_ = json.Unmarshal(b, &m)
+				tbl.Append(MapToLuaTable(L, m))
+			}
 		}
 	}
 	return tbl

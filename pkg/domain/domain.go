@@ -16,23 +16,7 @@ type World struct {
 	Units map[int]*Unit
 }
 
-type UnitSpawnCommand struct {
-	UnitId     int    `json:"unitId"`
-	GameZoneId string `json:"gameZoneId"`
-	X          int    `json:"x"`
-	Y          int    `json:"y"`
-	Owner      string `json:"owner"`
-}
-
-type CharacterOnCreateCommand struct {
-	UnitId int `json:"unitId"`
-}
-
-type Command struct {
-	Command           string                    `json:"command"`
-	UnitSpawn         *UnitSpawnCommand         `json:"unitSpawn,omitempty"`
-	CharacterOnCreate *CharacterOnCreateCommand `json:"characterOnCreate,omitempty"`
-}
+type Command = map[string]interface{}
 
 type Choice struct {
 	Name    string   `json:"name"`
