@@ -1,7 +1,6 @@
 handlers = {}
 
-handlers['Scenario.start'] = function(ctx)
-    -- подготовка карт уровней
+handlers['/start'] = function(ctx)
     table.insert(ctx.next, {
         command='Character.create'
     })

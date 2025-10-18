@@ -1,5 +1,7 @@
 package domain
 
+import worldzone "dnd-agent/pkg/world-zone"
+
 type Unit struct {
 	Attributes interface{}
 	Inventory  interface{}
@@ -14,6 +16,7 @@ type Unit struct {
 
 type World struct {
 	Units map[int]*Unit
+	Zones map[string]*worldzone.Level
 }
 
 type Command = map[string]interface{}
