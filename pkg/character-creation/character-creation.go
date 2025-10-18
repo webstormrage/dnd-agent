@@ -90,6 +90,7 @@ func ScanCharacter() *domain.Unit {
 	attrTable := L.NewTable()
 	inventoryTable := L.NewTable()
 
+	//TODO: перевести на command и handlers
 	templates := []string{
 		"base/base",
 		"abilities/abilities",
