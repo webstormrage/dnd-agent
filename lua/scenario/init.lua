@@ -6,7 +6,7 @@ handlers['/start'] = function(ctx)
     })
 end
 
--- TODO listeners['Character.create']
+-- TODO rewrite with helpers and new flow
 handlers['Character.On.create'] = function(ctx)
     table.insert(ctx.next, {
         command='Unit.spawn',

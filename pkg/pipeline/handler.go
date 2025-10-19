@@ -16,6 +16,7 @@ func HandleCommand(w *domain.World, cmds []domain.Command) []domain.Command {
 
 	cmdName, _ := command["command"].(string)
 
+	// TODO: rewrite with new command pattern
 	switch cmdName {
 	case "/load":
 		return handlers.Load(w, command, rest)
