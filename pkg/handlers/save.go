@@ -6,14 +6,13 @@ import (
 	"fmt"
 )
 
-func Save(w *domain.World, command domain.Command, rest []domain.Command) []domain.Command {
-	args, _ := command["args"].([]string)
-	file := args[0]
+func Save(w *domain.World, command *domain.Command) {
+	argv, _ := command.Args["argv"].([]string)
+	file := argv[0]
 
 	err := store.SaveWorldToJSON(w, "temp/saves/"+file+".json")
+	domain.Resolve(command)
 	if err != nil {
 		fmt.Println(err)
-		return rest
 	}
-	return rest
 }

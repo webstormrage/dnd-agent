@@ -6,15 +6,14 @@ import (
 	"fmt"
 )
 
-func Load(w *domain.World, command domain.Command, rest []domain.Command) []domain.Command {
-	args, _ := command["args"].([]string)
-	file := args[0]
+func Load(w *domain.World, command *domain.Command) {
+	argv, _ := command.Args["argv"].([]string)
+	file := argv[0]
 
 	save, err := store.LoadWorldFromJSON("temp/saves/" + file + ".json")
+	domain.Resolve(command)
 	if err != nil {
 		fmt.Println(err)
-		return rest
 	}
 	*w = *save
-	return []domain.Command{}
 }

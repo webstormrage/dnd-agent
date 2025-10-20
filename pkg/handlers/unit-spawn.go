@@ -7,15 +7,13 @@ import (
 	"strconv"
 )
 
-func UnitSpawn(w *domain.World, command domain.Command, rest []domain.Command) []domain.Command {
-	// Получаем spawn-данные
-	spawnData, _ := command["spawn"].(map[string]interface{})
+func UnitSpawn(w *domain.World, command *domain.Command) {
 
-	unitID := int(spawnData["unitId"].(float64))
-	x := int(spawnData["x"].(float64))
-	y := int(spawnData["y"].(float64))
-	owner, _ := spawnData["owner"].(string)
-	gameZoneId, _ := spawnData["gameZoneId"].(string)
+	unitID := int(command.Args["unitId"].(float64))
+	x := int(command.Args["x"].(float64))
+	y := int(command.Args["y"].(float64))
+	owner, _ := command.Args["x"].(string)
+	gameZoneId, _ := command.Args["x"].(string)
 
 	unit := w.Units[unitID]
 	unit.X = x
@@ -35,5 +33,5 @@ func UnitSpawn(w *domain.World, command domain.Command, rest []domain.Command) [
 		Height: 1,
 		Name:   "unit#" + strconv.Itoa(unit.ID),
 	})
-	return rest
+	domain.Resolve(command)
 }

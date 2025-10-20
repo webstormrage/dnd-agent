@@ -21,22 +21,21 @@ func initializeWorld() *domain.World {
 	return w
 }
 
-func Start(w *domain.World, command domain.Command, rest []domain.Command) []domain.Command {
+func Start(w *domain.World, command *domain.Command) {
 	world := initializeWorld()
 	*w = *world
 
-	next, err := luaUtils.CallLuaHandler(
+	err := luaUtils.CallLuaHandler(
 		"lua/scenario/init.lua",
 		"/start",
-		map[string]interface{}{
-			"next": []domain.Command{},
-		},
+		command,
 	)
 	if err != nil {
 		fmt.Println(err)
-		return rest
+		domain.Resolve(command)
+		return
 	}
 
-	rest = append(rest, next...)
-	return rest
+	domain.Resolve(command)
+	return
 }

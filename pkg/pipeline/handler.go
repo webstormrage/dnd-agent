@@ -6,34 +6,22 @@ import (
 	"fmt"
 )
 
-func HandleCommand(w *domain.World, cmds []domain.Command) []domain.Command {
-	if len(cmds) == 0 {
-		return cmds
-	}
+func HandleCommand(w *domain.World, command *domain.Command) {
 
-	command := cmds[0]
-	rest := cmds[1:]
-
-	cmdName, _ := command["command"].(string)
-
-	// TODO: rewrite with new command pattern
-	switch cmdName {
+	switch command.Procedure {
 	case "/load":
-		return handlers.Load(w, command, rest)
+		handlers.Load(w, command)
 	case "/save":
-		return handlers.Save(w, command, rest)
+		handlers.Save(w, command)
 	case "/start":
-		return handlers.Start(w, command, rest)
+		handlers.Start(w, command)
 	case "Character.create":
-		return handlers.CharacterCreate(w, command, rest)
-	case "Character.On.create":
-		return handlers.CharacterOnCreate(w, command, rest)
+		handlers.CharacterCreate(w, command)
 	case "Unit.spawn":
-		return handlers.UnitSpawn(w, command, rest)
+		handlers.UnitSpawn(w, command)
 	case "/map":
-		return handlers.Map(w, command, rest)
+		handlers.Map(w, command)
 	default:
-		fmt.Printf("Неизвестная команда: %v\n", cmdName)
-		return rest
+		fmt.Printf("Неизвестная команда: %v\n", command.Procedure)
 	}
 }

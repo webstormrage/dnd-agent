@@ -232,3 +232,57 @@ func LuaTableToCommands(tbl *lua.LTable) []domain.Command {
 
 	return cmds
 }
+
+func LuaTableToStack(tbl *lua.LTable) (*domain.Stack, error) {
+	stack := &domain.Stack{}
+
+	tbl.ForEach(func(k, v lua.LValue) {
+		key := k.String()
+		switch key {
+		case "push":
+			if nt, ok := v.(*lua.LTable); ok {
+				stack.Push = &domain.Command{
+					Procedure: getLuaStringField(nt, "procedure"),
+					Args:      LuaTableToMap(getLuaTableField(nt, "args")),
+					State:     LuaTableToMap(getLuaTableField(nt, "state")),
+				}
+			}
+		case "pop":
+			if v != lua.LNil {
+				val := LuaValueToGo(v)
+				stack.Pop = &val
+			}
+		}
+	})
+
+	return stack, nil
+}
+
+func getLuaTableField(tbl *lua.LTable, key string) *lua.LTable {
+	if val, ok := tbl.RawGetString(key).(*lua.LTable); ok {
+		return val
+	}
+	return nil
+}
+
+func getLuaStringField(tbl *lua.LTable, key string) string {
+	if str, ok := tbl.RawGetString(key).(lua.LString); ok {
+		return string(str)
+	}
+	return ""
+}
+
+func LuaValueToGo(v lua.LValue) interface{} {
+	switch val := v.(type) {
+	case lua.LString:
+		return string(val)
+	case lua.LNumber:
+		return float64(val)
+	case lua.LBool:
+		return bool(val)
+	case *lua.LTable:
+		return LuaTableToMap(val)
+	default:
+		return nil
+	}
+}

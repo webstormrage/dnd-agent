@@ -9,32 +9,34 @@ import (
 	"dnd-agent/pkg/domain"
 )
 
-// Engine — основной игровой цикл ввода / обработки команд.
+// Engine — главный управляющий цикл со стеком команд
 type Engine struct {
 	world *domain.World
-	queue []domain.Command
+	stack []*domain.Command // LIFO
 }
 
-// NewEngine — конструктор.
+// NewEngine — конструктор
 func NewEngine() *Engine {
 	return &Engine{
 		world: &domain.World{},
-		queue: make([]domain.Command, 0),
+		stack: make([]*domain.Command, 0),
 	}
 }
 
-// Run — главный цикл: обрабатывает очередь и ждёт команды пользователя.
+// Run — основной цикл обработки
 func (e *Engine) Run() {
-	fmt.Println("DnDAI запущен")
+	fmt.Println("DnDAI (stack mode) запущен")
 	reader := bufio.NewReader(os.Stdin)
 
 	for {
-		// Пока есть команды в очереди — обрабатываем их
-		for len(e.queue) > 0 {
-			e.queue = HandleCommand(e.world, e.queue)
+		// Пока есть команды в стеке — обрабатываем вершину
+		for len(e.stack) > 0 {
+			top := e.stack[len(e.stack)-1]
+			HandleCommand(e.world, top)
+			e.handleStackResult(top)
 		}
 
-		// Очередь пуста — ждём ввод пользователя
+		// Стэк пуст — ждём пользовательский ввод
 		fmt.Print("> ")
 		line, err := reader.ReadString('\n')
 		if err != nil {
@@ -47,21 +49,63 @@ func (e *Engine) Run() {
 			continue
 		}
 
-		cmd, args := ParseCommandLine(line)
-
+		cmd, argv := ParseCommandLine(line)
 		if cmd == "/quit" {
 			fmt.Println("Завершение работы.")
 			break
 		}
 
-		e.AddCommand(cmd, args)
+		// создаём новую команду
+		e.PushCommand(&domain.Command{
+			Procedure: cmd,
+			Args:      map[string]interface{}{"argv": argv},
+			State:     make(map[string]interface{}),
+			Stack:     domain.Stack{},
+		})
 	}
 }
 
-// AddCommand — добавляет новую команду в очередь.
-func (e *Engine) AddCommand(cmd string, args []string) {
-	e.queue = append(e.queue, domain.Command{
-		"command": cmd,
-		"args":    args,
-	})
+// PushCommand — добавляет команду в стек
+func (e *Engine) PushCommand(cmd *domain.Command) {
+	e.stack = append(e.stack, cmd)
+}
+
+// PopCommand — снимает верхнюю команду
+func (e *Engine) PopCommand() *domain.Command {
+	if len(e.stack) == 0 {
+		return nil
+	}
+	top := e.stack[len(e.stack)-1]
+	e.stack = e.stack[:len(e.stack)-1]
+	return top
+}
+
+// handleStackResult — логика стэка
+func (e *Engine) handleStackResult(cmd *domain.Command) {
+	if cmd == nil {
+		_ = e.PopCommand()
+		return
+	}
+
+	// 🔹 Если есть следующая команда — пушим в стек
+	if cmd.Stack.Push != nil {
+		e.PushCommand(cmd.Stack.Push)
+		return
+	}
+
+	// 🔹 Если есть pop — снимаем текущую
+	if cmd.Stack.Pop != nil {
+		popVal := *cmd.Stack.Pop
+		e.PopCommand()
+
+		// если стек не пуст — передаём значение наверх
+		if len(e.stack) > 0 {
+			parent := e.stack[len(e.stack)-1]
+			target := parent.Stack.Target
+			parent.State[target] = popVal
+			parent.Stack.Push = nil
+		}
+
+		cmd.Stack.Pop = nil
+	}
 }

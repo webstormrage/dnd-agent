@@ -19,7 +19,12 @@ type World struct {
 	Zones map[string]*worldzone.Level
 }
 
-type Command = map[string]interface{}
+type Command struct {
+	Procedure string
+	Args      map[string]interface{}
+	State     map[string]interface{}
+	Stack
+}
 
 type Choice struct {
 	Name    string   `json:"name"`
