@@ -3,7 +3,6 @@ package pipeline
 import (
 	"dnd-agent/pkg/domain"
 	"dnd-agent/pkg/handlers"
-	"fmt"
 )
 
 func HandleCommand(w *domain.World, command *domain.Command) {
@@ -22,6 +21,6 @@ func HandleCommand(w *domain.World, command *domain.Command) {
 	case "/map":
 		handlers.Map(w, command)
 	default:
-		fmt.Printf("Неизвестная команда: %v\n", command.Procedure)
+		handlers.Default(w, command)
 	}
 }

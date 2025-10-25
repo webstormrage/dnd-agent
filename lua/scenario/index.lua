@@ -11,7 +11,7 @@ generators['/start'] = function(args, state, stack)
             state['step'] = 'spawn-character'
         end,
         ['spawn-character']=function()
-            stack.next = {
+            stack.push = {
                 procedure='Unit.spawn',
                 args={
                     unitId=state.unitId,

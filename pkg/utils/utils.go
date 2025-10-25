@@ -46,10 +46,14 @@ func LuaTableToInterface(tbl *lua.LTable) interface{} {
 }
 
 func LuaTableToMap(tbl *lua.LTable) map[string]interface{} {
+	if tbl == nil {
+		return map[string]interface{}{}
+	}
+
 	result := make(map[string]interface{})
 	tbl.ForEach(func(k, v lua.LValue) {
 		key := k.String()
-		result[key] = LuaValueToInterface(v)
+		result[key] = LuaValueToGo(v)
 	})
 	return result
 }
@@ -251,6 +255,11 @@ func LuaTableToStack(tbl *lua.LTable) (*domain.Stack, error) {
 			if v != lua.LNil {
 				val := LuaValueToGo(v)
 				stack.Pop = &val
+			}
+		case "target":
+			if vStr, ok := v.(lua.LString); ok {
+				s := string(vStr)
+				stack.Target = s
 			}
 		}
 	})

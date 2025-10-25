@@ -13,9 +13,9 @@ generators['Unit.addBackground'] = function (args, state, stack)
                     name = 'language',
                     type = 'select',
                     options = core.filterBy(core.LANGS, args.attributes['proficiency'])
-                },
-                target = 'language'
+                }
             }
+            stack.target = 'language'
             state['step'] = 'musical-skill'
         end,
         ['musical-skill'] = function()
@@ -26,8 +26,8 @@ generators['Unit.addBackground'] = function (args, state, stack)
                     type = 'select',
                     options = core.filterBy(core.MUSIC, args.attributes['proficiency'])
                 },
-                target = 'musical-skill'
             }
+            stack.target = 'musical-skill'
             state['step'] = 'rest'
         end,
         ['rest'] = function()

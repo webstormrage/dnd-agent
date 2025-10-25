@@ -1,9 +1,9 @@
 package domain
 
 type Stack struct {
-	Push   *Command
-	Pop    *interface{}
-	Target string
+	Push   *Command     `json:"push"`
+	Pop    *interface{} `json:"pop"`
+	Target string       `json:"target"`
 }
 
 func Resolve(command *Command) {

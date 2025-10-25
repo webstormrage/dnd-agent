@@ -15,8 +15,8 @@ generators['Unit.addAbilities'] = function (args, state, stack)
         args={
             name = 'strength',
             type = 'int'
-        },
-        target = ability
+        }
     }
+    stack.target = ability
     state['ability'] = ability
 end
