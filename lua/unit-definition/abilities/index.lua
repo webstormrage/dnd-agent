@@ -5,7 +5,9 @@ generators['Unit.addAbilities'] = function (args, state, stack)
     local abilities = {'strength', 'constitution', 'dexterity', 'intelligence', 'charisma', 'wisdom'}
     local aidx = core.findIndex(abilities, state['ability']) + 1
     if aidx > #abilities then
-        stack.pop = core.omit()
+        stack.pop = core.omit(state, {
+          ['ability']=true
+        })
     end
     local ability = abilities[aidx]
     stack.push = {

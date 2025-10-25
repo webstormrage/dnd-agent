@@ -1,3 +1,4 @@
+-- TODO deprecated
 handlers = {}
 
 handlers['/start'] = function(ctx)

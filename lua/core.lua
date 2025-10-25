@@ -35,3 +35,42 @@ _G.core.findIndex = function(list, value)
     end
     return index
 end
+
+_G.core.get = function(dict, field)
+    if dict[field] == nil then
+        dict[field] = {}
+    end
+    return dict[field]
+end
+
+_G.core.LANGS = {
+    'language/abyssal',
+    'language/celestial',
+    'language/draconic',
+    'language/deep-speech',
+    'language/infernal',
+    'language/primordial',
+    'language/sylvan',
+    'language/undercommon',
+    'language/common',
+    'language/dwarvish',
+    'language/elvish',
+    'language/giant',
+    'language/gnomish',
+    'language/goblin',
+    'language/halfling',
+    'language/orc'
+}
+
+_G.core.MUSIC = {
+    'bagpipes',
+    'drum',
+    'dulcimer',
+    'flute',
+    'lute',
+    'lyre',
+    'horn',
+    'pan-flute',
+    'shawm',
+    'viol'
+}

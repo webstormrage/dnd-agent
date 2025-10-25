@@ -1,3 +1,4 @@
+-- TODO deprecated
 function unitDefinition(attributes, inventory, options)
     -- Владения
     if attributes['proficiencies'] == nil then
