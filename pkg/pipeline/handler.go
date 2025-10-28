@@ -20,6 +20,8 @@ func HandleCommand(w *domain.World, command *domain.Command) {
 		handlers.UnitSpawn(w, command)
 	case "/map":
 		handlers.Map(w, command)
+	case "/go":
+		handlers.Go(w, command)
 	default:
 		handlers.Default(w, command)
 	}

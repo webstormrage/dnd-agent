@@ -33,14 +33,15 @@ func LoadAllMaps(w *domain.World) error {
 			return fmt.Errorf("ошибка чтения файла %s: %v", path, err)
 		}
 
-		level, err := worldzone.LoadLevelFromXML(string(file))
+		var level worldzone.Level
+		err = level.Load(string(file))
 		if err != nil {
 			return fmt.Errorf("ошибка загрузки уровня из %s: %v", path, err)
 		}
 
 		// убираем расширение для ключа карты
 		name := strings.TrimSuffix(entry.Name(), filepath.Ext(entry.Name()))
-		w.Zones[name] = level
+		w.Zones[name] = &level
 	}
 
 	return nil

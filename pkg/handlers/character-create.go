@@ -7,6 +7,7 @@ import (
 
 func CharacterCreate(w *domain.World, command *domain.Command) {
 	character := characterCreation.ScanCharacter()
+	// TODO: fix this
 	character.ID = 1
 	w.Units[character.ID] = character
 
