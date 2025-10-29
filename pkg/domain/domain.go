@@ -8,8 +8,6 @@ type Unit struct {
 	Equipment  interface{}
 	States     interface{}
 	ID         int
-	X          int
-	Y          int
 	ZoneId     *string
 	Owner      string
 }

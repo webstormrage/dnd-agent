@@ -2,8 +2,6 @@ package worldzone
 
 import "container/list"
 
-type point struct{ X, Y int }
-
 // FindNearestBFS выполняет поиск ближайшей ячейки от (x, y),
 // удовлетворяющей переданному предикату.
 // Возвращает путь до неё в виде []Cell.
@@ -15,7 +13,7 @@ func FindNearestBFS(level *Level, x, y int, predicate func(Cell) bool) []Cell {
 	}
 	w := len(grid[0])
 
-	if !IsPathible(grid[y][x]) {
+	if isOutOfBounds(x, y, grid) || !IsPathible(grid[x][y]) {
 		return nil
 	}
 
@@ -24,66 +22,65 @@ func FindNearestBFS(level *Level, x, y int, predicate func(Cell) bool) []Cell {
 		{1, 1}, {1, -1}, {-1, 1}, {-1, -1},
 	}
 
-	visited := make([][]bool, h)
-	prev := make(map[point]*point)
+	visited := make([][]bool, w)
+	prev := make(map[*Cell]*Cell)
 
 	for i := range visited {
-		visited[i] = make([]bool, w)
+		visited[i] = make([]bool, h)
 	}
 
-	start := point{X: x, Y: y}
+	start := &grid[x][y]
 	queue := list.New()
 	queue.PushBack(start)
-	visited[y][x] = true
+	visited[x][y] = true
 
 	for queue.Len() > 0 {
 		elem := queue.Front()
 		queue.Remove(elem)
-		cell := elem.Value.(point)
-
-		curCell := grid[cell.Y][cell.X]
+		cell := elem.Value.(*Cell)
 
 		// 🟢 Проверяем предикат — если подходит, возвращаем путь
-		if predicate(curCell) {
-			return reconstructPath(grid, prev, start, cell)
+		if predicate(*cell) {
+			return reconstructPathCells(prev, start, cell)
 		}
 
-		// иначе — добавляем соседей
+		// Проверяем всех соседей (8 направлений)
 		for _, d := range dirs {
 			nx, ny := cell.X+d[0], cell.Y+d[1]
-			if nx < 0 || ny < 0 || nx >= w || ny >= h {
+			if isOutOfBounds(nx, ny, grid) {
 				continue
 			}
-			if visited[ny][nx] {
+			if visited[nx][ny] {
 				continue
 			}
-			if !IsPathible(grid[ny][nx]) {
+			next := &grid[nx][ny]
+			if !IsPathible(*next) {
 				continue
 			}
 
-			visited[ny][nx] = true
-			prev[point{X: nx, Y: ny}] = &cell
-			queue.PushBack(point{X: nx, Y: ny})
+			visited[nx][ny] = true
+			prev[next] = cell
+			queue.PushBack(next)
 		}
 	}
 
-	// 🚫 Если ничего не нашли
+	// 🚫 Не нашли подходящую ячейку
 	return nil
 }
 
-// reconstructPath восстанавливает путь от старта до найденной клетки
-func reconstructPath(grid [][]Cell, prev map[point]*point, start, goal point) []Cell {
+// reconstructPathCells восстанавливает путь из prev-таблицы.
+func reconstructPathCells(prev map[*Cell]*Cell, start, goal *Cell) []Cell {
 	path := []Cell{}
-	cur := &goal
+	cur := goal
 	for cur != nil {
-		path = append(path, grid[cur.Y][cur.X])
-		if *cur == start {
+		path = append(path, *cur)
+		if cur == start {
 			break
 		}
-		cur = prev[*cur]
+		cur = prev[cur]
 	}
 
-	// переворачиваем путь
+	// Переворачиваем путь (от старта к цели)
 	for i, j := 0, len(path)-1; i < j; i, j = i+1, j-1 {
 		path[i], path[j] = path[j], path[i]
 	}

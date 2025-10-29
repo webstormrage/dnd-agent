@@ -1,9 +1,25 @@
 package worldzone
 
+// TODO: делать классом layout
 type Cell struct {
+	X, Y   int
 	Type   string
 	Room   *Room
 	Object *Object
+}
+
+// ====== Хелпер ======
+func setCell(lvlMap [][]Cell, x, y int, cellType string, room *Room, obj *Object) {
+	if isOutOfBounds(x, y, lvlMap) {
+		return
+	}
+	lvlMap[x][y] = Cell{
+		X:      x,
+		Y:      y,
+		Type:   cellType,
+		Room:   room,
+		Object: obj,
+	}
 }
 
 // ====== Создание карты ======
@@ -18,10 +34,10 @@ func createMap(lvl *Level) [][]Cell {
 
 func createLevel(lvl *Level) [][]Cell {
 	lvlMap := make([][]Cell, lvl.Width)
-	for i := 0; i < lvl.Width; i++ {
-		lvlMap[i] = make([]Cell, lvl.Height)
-		for j := 0; j < lvl.Height; j++ {
-			lvlMap[i][j] = Cell{Type: "empty"}
+	for x := 0; x < lvl.Width; x++ {
+		lvlMap[x] = make([]Cell, lvl.Height)
+		for y := 0; y < lvl.Height; y++ {
+			setCell(lvlMap, x, y, "empty", nil, nil)
 		}
 	}
 	return lvlMap
@@ -32,21 +48,13 @@ func isOutOfBounds(x, y int, lvlMap [][]Cell) bool {
 }
 
 func createRoomWalls(room *Room, lvlMap [][]Cell) {
-	for i := room.X; i < room.X+room.Width; i++ {
-		if !isOutOfBounds(i, room.Y, lvlMap) {
-			lvlMap[i][room.Y] = Cell{Type: "wall", Room: room}
-		}
-		if !isOutOfBounds(i, room.Y+room.Height-1, lvlMap) {
-			lvlMap[i][room.Y+room.Height-1] = Cell{Type: "wall", Room: room}
-		}
+	for x := room.X; x < room.X+room.Width; x++ {
+		setCell(lvlMap, x, room.Y, "wall", room, nil)
+		setCell(lvlMap, x, room.Y+room.Height-1, "wall", room, nil)
 	}
-	for j := room.Y; j < room.Y+room.Height; j++ {
-		if !isOutOfBounds(room.X, j, lvlMap) {
-			lvlMap[room.X][j] = Cell{Type: "wall", Room: room}
-		}
-		if !isOutOfBounds(room.X+room.Width-1, j, lvlMap) {
-			lvlMap[room.X+room.Width-1][j] = Cell{Type: "wall", Room: room}
-		}
+	for y := room.Y; y < room.Y+room.Height; y++ {
+		setCell(lvlMap, room.X, y, "wall", room, nil)
+		setCell(lvlMap, room.X+room.Width-1, y, "wall", room, nil)
 	}
 }
 
@@ -57,11 +65,9 @@ func createWalls(rooms []Room, lvlMap [][]Cell) {
 }
 
 func createObject(obj *Object, lvlMap [][]Cell) {
-	for i := obj.X; i < obj.X+obj.Width; i++ {
-		for j := obj.Y; j < obj.Y+obj.Height; j++ {
-			if !isOutOfBounds(i, j, lvlMap) {
-				lvlMap[i][j] = Cell{Type: obj.Type, Object: obj}
-			}
+	for x := obj.X; x < obj.X+obj.Width; x++ {
+		for y := obj.Y; y < obj.Y+obj.Height; y++ {
+			setCell(lvlMap, x, y, obj.Type, nil, obj)
 		}
 	}
 }

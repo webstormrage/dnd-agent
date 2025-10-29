@@ -13,8 +13,6 @@ func UnitSpawn(w *domain.World, command *domain.Command) {
 	gameZoneId, _ := command.Args["gameZoneId"].(string)
 
 	unit := w.Units[unitID]
-	unit.X = x
-	unit.Y = y
 	unit.Owner = owner
 	unit.ZoneId = &gameZoneId
 	zone := w.Zones[*unit.ZoneId]
