@@ -34,7 +34,7 @@ func Transition(unitId int, dx int, dy int, times int, level *Level) (int, []Cel
 		// TODO: здесь должна быть проверка пересечения зон (например opportunity attack)
 		cell := layout[cx][cy]
 		path = append(path, cell)
-		if IsPathible(cell) {
+		if !IsPathible(cell) {
 			break
 		}
 		if IsPlaceble(cell) {

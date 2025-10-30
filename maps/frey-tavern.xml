@@ -1,7 +1,7 @@
 <level width="20" height="22">
     <!--Фасад таверны-->
     <room x="0" y="0" width="20" height="22" />
-    <object type="door" x="12" y="0" width="1" height="1" to="lamp-street.tavern-door" name="frey-tavern.entrance" />
+    <object type="door" x="12" y="0" width="1" height="1" to="lamp-street.tavern-door" name="entrance" />
 
     <!-- Заполнение зала -->
     <object type="table" x="1" y="3" width="2" height="1" />

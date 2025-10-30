@@ -125,8 +125,6 @@ func ScanCharacter() *domain.Unit {
 		Equipment:  nil,
 		States:     nil,
 		ID:         0,
-		X:          0,
-		Y:          0,
 		ZoneId:     nil,
 		Owner:      "",
 	}

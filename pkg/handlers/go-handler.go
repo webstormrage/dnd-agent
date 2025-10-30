@@ -17,7 +17,7 @@ func Go(w *domain.World, command *domain.Command) {
 		times, _ = strconv.Atoi(argv[1])
 	}
 
-	// TODO: fix this
+	// TODO: extract current unitID from command
 	unit := w.Units[1]
 	if unit.ZoneId == nil {
 		return

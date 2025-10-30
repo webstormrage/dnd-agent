@@ -1,7 +1,7 @@
 <level width='10' height='20'>
     <!--Фасад доходного дома-->
     <room x='0' y='0' width='10' height='20' />
-    <object type="door" height="1" width="1" x='5' y='0' to="lamp-street.pastion-door" name="frey-pastion.entrance"/>
+    <object type="door" height="1" width="1" x='5' y='0' to="lamp-street.pastion-door" name="entrance"/>
 
     <!--Комната 1-->
     <room x='0' y='0' width='4' height='6'/>
