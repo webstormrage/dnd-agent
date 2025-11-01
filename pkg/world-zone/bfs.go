@@ -7,11 +7,10 @@ import "container/list"
 // Возвращает путь до неё в виде []Cell.
 func FindNearestBFS(level *Level, x, y int, predicate func(Cell) bool) []Cell {
 	grid := createMap(level)
-	h := len(grid)
-	if h == 0 {
+	w := len(grid)
+	if w == 0 {
 		return nil
 	}
-	w := len(grid[0])
 
 	if isOutOfBounds(x, y, grid) || !IsPathible(grid[x][y]) {
 		return nil
@@ -22,17 +21,12 @@ func FindNearestBFS(level *Level, x, y int, predicate func(Cell) bool) []Cell {
 		{1, 1}, {1, -1}, {-1, 1}, {-1, -1},
 	}
 
-	visited := make([][]bool, w)
 	prev := make(map[*Cell]*Cell)
 
-	for i := range visited {
-		visited[i] = make([]bool, h)
-	}
-
 	start := &grid[x][y]
+	prev[start] = start // ✅ закольцевали стартовую клетку
 	queue := list.New()
 	queue.PushBack(start)
-	visited[x][y] = true
 
 	for queue.Len() > 0 {
 		elem := queue.Front()
@@ -50,15 +44,16 @@ func FindNearestBFS(level *Level, x, y int, predicate func(Cell) bool) []Cell {
 			if isOutOfBounds(nx, ny, grid) {
 				continue
 			}
-			if visited[nx][ny] {
+			next := &grid[nx][ny]
+
+			// если уже был посещён — пропускаем
+			if _, seen := prev[next]; seen {
 				continue
 			}
-			next := &grid[nx][ny]
 			if !IsPathible(*next) {
 				continue
 			}
 
-			visited[nx][ny] = true
 			prev[next] = cell
 			queue.PushBack(next)
 		}
@@ -72,12 +67,15 @@ func FindNearestBFS(level *Level, x, y int, predicate func(Cell) bool) []Cell {
 func reconstructPathCells(prev map[*Cell]*Cell, start, goal *Cell) []Cell {
 	path := []Cell{}
 	cur := goal
-	for cur != nil {
+	for {
 		path = append(path, *cur)
 		if cur == start {
 			break
 		}
 		cur = prev[cur]
+		if cur == nil {
+			break // на случай некорректных prev
+		}
 	}
 
 	// Переворачиваем путь (от старта к цели)

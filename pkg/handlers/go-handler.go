@@ -61,8 +61,8 @@ func Go(w *domain.World, command *domain.Command) {
 		return
 	}
 
-	// TODO: Cell должен знать свои координаты, у юнита не должно быть X и Y, координат
 	targetCell := result[len(result)-1]
 	level.UnSpawn(unit.ID)
 	nextZone.SpawnUnit(unit.ID, targetCell.X, targetCell.Y)
+	unit.ZoneId = &nextZoneId
 }
