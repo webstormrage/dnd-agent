@@ -5,9 +5,18 @@ generators['/start'] = function(args, state, stack)
     local steps = {
         ['create-character']=function()
             stack.push = {
-                procedure='Character.create'
+                procedure='Unit.createCharacter'
             }
             stack.target = 'unitId'
+            state['step'] = 'set-owner'
+        end,
+        ['set-owner']=function()
+            stack.push = {
+                procedure='World.setPlayerCurrentUnit',
+                args={
+                    unitId=state['unitId']
+                }
+            }
             state['step'] = 'spawn-character'
         end,
         ['spawn-character']=function()

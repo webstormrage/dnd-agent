@@ -62,6 +62,35 @@ _G.core.LANGS = {
     'language/orc'
 }
 
+_G.core.MARTIAL_MEELE_WEAPONS = {
+    'battleaxe',
+    'flail',
+    'glaive',
+    'greataxe',
+    'greatsword',
+    'halberd',
+    'lance',
+    'longsword',
+    'maul',
+    'morningstar',
+    'pike',
+    'rapier',
+    'scimitar',
+    'shortsword',
+    'trident',
+    'war-pick',
+    'warhammer',
+    'whip'
+}
+
+_G.core.FIGHTING_STYLES = {
+    'fighting-style/archery',
+    'fighting-style/defense',
+    'fighting-style/great-weapon-fighting',
+    'fighting-style/protection',
+    'fighting-style/two-weapon-fighting'
+}
+
 _G.core.MUSIC = {
     'bagpipes',
     'drum',

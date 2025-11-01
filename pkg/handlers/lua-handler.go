@@ -6,7 +6,7 @@ import (
 	"fmt"
 )
 
-func Start(_ *domain.World, command *domain.Command) {
+func LuaHandle(_ *domain.World, command *domain.Command, script string, handler string) {
 	err := luaUtils.CallLuaHandler(
 		"lua/scenario/index.lua",
 		"/start",

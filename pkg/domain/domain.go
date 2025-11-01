@@ -13,8 +13,9 @@ type Unit struct {
 }
 
 type World struct {
-	Units map[int]*Unit
-	Zones map[string]*worldzone.Level
+	PlayerUnitId *int
+	Units        map[int]*Unit
+	Zones        map[string]*worldzone.Level
 }
 
 type Command struct {

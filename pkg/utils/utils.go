@@ -295,3 +295,22 @@ func LuaValueToGo(v lua.LValue) interface{} {
 		return nil
 	}
 }
+
+// ToUnit пытается преобразовать interface{} в *Unit
+func ToUnit(v interface{}) (*domain.Unit, error) {
+	if v == nil {
+		return nil, fmt.Errorf("пустое значение, не могу преобразовать в Unit")
+	}
+
+	data, err := json.Marshal(v)
+	if err != nil {
+		return nil, fmt.Errorf("ошибка маршалинга: %v", err)
+	}
+
+	var u domain.Unit
+	if err := json.Unmarshal(data, &u); err != nil {
+		return nil, fmt.Errorf("ошибка преобразования в Unit: %v", err)
+	}
+
+	return &u, nil
+}

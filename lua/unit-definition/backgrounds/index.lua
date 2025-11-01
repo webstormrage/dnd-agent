@@ -3,8 +3,11 @@ core = _G.core or {}
 
 generators['Unit.addBackground'] = function (args, state, stack)
     local step = state['step'] or 'language'
-    local attributes = core.get(state, 'attributes', {})
-    local inventory = core.get(state, 'inventory', {})
+    local attributes = core.get(state, 'attributes', args.unit.attributes)
+    local inventory = core.get(state, 'inventory', args.unit.inventory)
+    local proficiencies = core.get(state, 'proficiencies', attributes['proficiencies'])
+    attributes['proficiencies'] = proficiencies
+
     local steps = {
         ['language'] = function()
             stack.push = {
@@ -12,7 +15,7 @@ generators['Unit.addBackground'] = function (args, state, stack)
                 args = {
                     name = 'language',
                     type = 'select',
-                    options = core.filterBy(core.LANGS, args.attributes['proficiency'])
+                    options = core.filterBy(core.LANGS, proficiencies)
                 }
             }
             stack.target = 'language'
@@ -24,7 +27,7 @@ generators['Unit.addBackground'] = function (args, state, stack)
                 args = {
                     name = 'musical-skill',
                     type = 'select',
-                    options = core.filterBy(core.MUSIC, args.attributes['proficiency'])
+                    options = core.filterBy(core.MUSIC, proficiencies)
                 },
             }
             stack.target = 'musical-skill'
@@ -33,16 +36,16 @@ generators['Unit.addBackground'] = function (args, state, stack)
         ['rest'] = function()
             local lang = state['language']
             if lang ~= nil then
-                attributes['proficiencies'][lang] = true
+                proficiencies[lang] = true
             end
 
             local music = state['musical-skill']
             if music ~= nil then
-                attributes['proficiencies'][music] = true
+                proficiencies[music] = true
             end
 
-            attributes['proficiencies']['survival'] =  true
-            attributes['proficiencies']['athletics'] = true
+            proficiencies['survival'] =  true
+            proficiencies['athletics'] = true
 
             inventory['staff'] = (inventory['staff'] or 0) + 1
             inventory['hunting-trap'] = (inventory['hunting-trap'] or 0) + 1
@@ -50,8 +53,10 @@ generators['Unit.addBackground'] = function (args, state, stack)
             inventory['coins'] = (inventory['coins'] or 0) + 1000
 
             stack.pop = {
-                attributes=attributes,
-                inventory=inventory
+                unit={
+                    attributes=attributes,
+                    inventory=inventory
+                }
             }
         end
     }

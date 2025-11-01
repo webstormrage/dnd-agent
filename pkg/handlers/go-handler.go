@@ -18,7 +18,8 @@ func Go(w *domain.World, command *domain.Command) {
 	}
 
 	// TODO: extract current unitID from command
-	unit := w.Units[1]
+	uid := *w.PlayerUnitId
+	unit := w.Units[uid]
 	if unit.ZoneId == nil {
 		return
 	}

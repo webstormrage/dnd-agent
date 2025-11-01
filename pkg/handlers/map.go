@@ -8,11 +8,12 @@ import (
 
 func Map(w *domain.World, command *domain.Command) {
 	// Проверка — есть ли уже юнит под контролем игрока
-	if _, exists := w.Units[1]; !exists {
+	uid := *w.PlayerUnitId
+	if _, exists := w.Units[uid]; !exists {
 		domain.Resolve(command)
 		return
 	}
-	character := w.Units[1]
+	character := w.Units[uid]
 	// Проверка — заспавлен ли юнит
 	if character.ZoneId == nil {
 		domain.Resolve(command)
