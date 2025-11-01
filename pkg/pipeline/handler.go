@@ -34,6 +34,8 @@ func HandleCommand(w *domain.World, command *domain.Command) {
 		handlers.WorldAddUnit(w, command)
 	case "World.setPlayerCurrentUnit":
 		handlers.SetPlayerCurrentUnit(w, command)
+	case "option.scanf":
+		handlers.OptionScanf(w, command)
 	case "/map":
 		handlers.Map(w, command)
 	case "/go":

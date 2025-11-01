@@ -18,6 +18,10 @@ generators['Unit.addRace'] = function(args, state, stack)
 
     local steps = {
         ['language']=function()
+            local options = core.filterBy(core.LANGS, proficiencies)
+            if #options == 0 then
+                state['step'] = 'rest'
+            end
             stack.push = {
                 procedure = "option.scanf",
                 args = {

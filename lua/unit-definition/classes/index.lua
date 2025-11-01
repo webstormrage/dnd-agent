@@ -25,21 +25,26 @@ generators['Unit.addFighter_1'] = function(args, state, stack)
 
     local steps = {
         ['primary-skill']=function()
+            local options = core.filterBy({
+                'acrobatics',
+                'animal-handling',
+                'athletics',
+                'history',
+                'insight',
+                'intimidation',
+                'perception',
+                'survival'
+            }, proficiencies)
+            if #options == 0 then
+                state['step'] = 'secondary-skill'
+                return
+            end
             stack.push = {
                 procedure = "option.scanf",
                 args = {
                     name = 'primary-skill',
                     type = 'select',
-                    options = core.filterBy({
-                        'acrobatics',
-                        'animal-handling',
-                        'athletics',
-                        'history',
-                        'insight',
-                        'intimidation',
-                        'perception',
-                        'survival'
-                    }, proficiencies)
+                    options = options
                 }
             }
             stack.target = 'primary-skill'
@@ -50,21 +55,26 @@ generators['Unit.addFighter_1'] = function(args, state, stack)
             if primarySkill ~= nil then
                 proficiencies[primarySkill] = true
             end
+            local options = core.filterBy({
+                'acrobatics',
+                'animal-handling',
+                'athletics',
+                'history',
+                'insight',
+                'intimidation',
+                'perception',
+                'survival'
+            }, proficiencies)
+            if #options == 0 then
+                state['step'] = 'feat'
+                return
+            end
             stack.push = {
                 procedure = "option.scanf",
                 args = {
                     name = 'secondary-skill',
                     type = 'select',
-                    options = core.filterBy({
-                        'acrobatics',
-                        'animal-handling',
-                        'athletics',
-                        'history',
-                        'insight',
-                        'intimidation',
-                        'perception',
-                        'survival'
-                    }, proficiencies)
+                    options = options
                 }
             }
             stack.target = 'secondary-skill'
@@ -75,12 +85,17 @@ generators['Unit.addFighter_1'] = function(args, state, stack)
             if secondarySkill ~= nil then
                 proficiencies[secondarySkill] = true
             end
+            local options = core.filterBy(core.FIGHTING_STYLES, attributes)
+            if #options == 0 then
+                state['step'] = 'armor'
+                return
+            end
             stack.push = {
                 procedure = "option.scanf",
                 args = {
                     name = 'feat',
                     type = 'select',
-                    options = core.filterBy(core.FIGHTING_STYLES, attributes)
+                    options = options
                 }
             }
             stack.target = 'feat'
@@ -100,10 +115,10 @@ generators['Unit.addFighter_1'] = function(args, state, stack)
                 args = {
                     name = 'armor',
                     type = 'select',
-                    options = core.merge({
+                    options = {
                         'heavy-set',
                         'light-set'
-                    })
+                    }
                 }
             }
             stack.target = 'armor'
@@ -151,7 +166,7 @@ generators['Unit.addFighter_1'] = function(args, state, stack)
                 args = {
                     name = 'ranged',
                     type = 'select',
-                    options = core.merge({ 'crossbow-set' ,'axe-set' })
+                    options = { 'crossbow-set' ,'axe-set' }
 
                 }
             }
@@ -171,7 +186,7 @@ generators['Unit.addFighter_1'] = function(args, state, stack)
                 args = {
                     name = 'pack',
                     type = 'select',
-                    options = core.merge({ 'explorer-pack' ,'dungeon-pack' })
+                    options = { 'explorer-pack' ,'dungeon-pack' }
                 }
             }
             stack.target = 'pack'

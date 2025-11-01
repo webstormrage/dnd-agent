@@ -10,35 +10,44 @@ generators['Unit.addBackground'] = function (args, state, stack)
 
     local steps = {
         ['language'] = function()
+            local options =  core.filterBy(core.LANGS, proficiencies)
+            if #options == 0 then
+                state['step'] = 'musical-skill'
+                return
+            end
             stack.push = {
                 procedure = "option.scanf",
                 args = {
                     name = 'language',
                     type = 'select',
-                    options = core.filterBy(core.LANGS, proficiencies)
+                    options = options
                 }
             }
             stack.target = 'language'
             state['step'] = 'musical-skill'
         end,
         ['musical-skill'] = function()
+            local lang = state['language']
+            if lang ~= nil then
+                proficiencies[lang] = true
+            end
+            local options =  core.filterBy(core.MUSIC, proficiencies)
+            if #options == 0 then
+                state['step'] = 'rest'
+                return
+            end
             stack.push = {
                 procedure = "option.scanf",
                 args = {
                     name = 'musical-skill',
                     type = 'select',
-                    options = core.filterBy(core.MUSIC, proficiencies)
+                    options = options
                 },
             }
             stack.target = 'musical-skill'
             state['step'] = 'rest'
         end,
         ['rest'] = function()
-            local lang = state['language']
-            if lang ~= nil then
-                proficiencies[lang] = true
-            end
-
             local music = state['musical-skill']
             if music ~= nil then
                 proficiencies[music] = true
